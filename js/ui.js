@@ -632,26 +632,61 @@ const UI = {
   renderClipboardHistory(history) {
     if (!this.elements.list) return;
 
-    // Clear existing items
-    this.elements.list.innerHTML = '';
-
     // Apply filters
     let filteredHistory = this.filterHistory(history);
 
     // Show empty state if needed
     if (filteredHistory.length === 0) {
+      this.elements.list.innerHTML = '';
       this.showEmptyState();
       return;
     }
 
-    // Create document fragment for better performance
-    const fragment = document.createDocumentFragment();
+    // Store filtered history for virtual scrolling
+    this.filteredHistory = filteredHistory;
+
+    // Check if we should use virtual scrolling (>50 items)
+    if (filteredHistory.length > 50) {
+      this.initVirtualScrolling(filteredHistory);
+    } else {
+      // For small lists, render normally
+      this.renderAllItems(filteredHistory);
+    }
+  },
+
+  /**
+   * Initialize virtual scrolling for large lists
+   * @param {Array} items - Items to render
+   */
+  initVirtualScrolling(items) {
+    // For now, just render all items normally since virtual scrolling
+    // is causing issues with the popup's fixed height constraint
+    // We'll revisit this with a better implementation later
+    this.renderAllItems(items);
     
-    filteredHistory.forEach(item => {
+    // Removed toast notification - not needed
+  },
+
+  /**
+   * Render all items (for small lists)
+   * @param {Array} items - Items to render
+   */
+  renderAllItems(items) {
+    // Clean up virtual scrolling if it was active
+    if (this.virtualScrollHandler) {
+      window.removeEventListener('scroll', this.virtualScrollHandler);
+      this.virtualScrollHandler = null;
+    }
+    
+    this.elements.list.innerHTML = '';
+    this.elements.list.style.position = '';
+    this.elements.list.classList.remove('virtual-scrolling');
+    
+    const fragment = document.createDocumentFragment();
+    items.forEach(item => {
       const listItem = this.createClipboardItem(item);
       fragment.appendChild(listItem);
     });
-
     this.elements.list.appendChild(fragment);
   },
 

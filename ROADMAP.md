@@ -154,16 +154,19 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 
 ---
 
-## 💾 Phase 7: Storage & Performance ⏳ PLANNED
+## 💾 Phase 7: Storage & Performance ✅ PARTIALLY COMPLETED
 **Goal:** Handle large amounts of data efficiently
 
-### Planned Tasks:
-- [ ] Virtual scrolling for large lists
+### Completed Tasks:
+- [x] Storage usage indicators in settings
+- [x] Memory optimization with cleanup functions
+- [x] Data compression for text storage
+- [x] Performance optimization button
+
+### Pending Tasks:
+- [ ] Virtual scrolling (needs better implementation)
 - [ ] Pagination as fallback
-- [ ] Data compression
-- [ ] Lazy loading
-- [ ] Storage usage indicators
-- [ ] Memory optimization
+- [ ] Lazy loading for images/previews
 
 ---
 
@@ -234,10 +237,10 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 ---
 
 ## 🎯 Current Status
-**Phase 6 COMPLETED:** All Advanced Features implemented
-**Just Completed:** Rich Text Preview, Statistics Dashboard, Tag Management
-**Next Up:** Phase 7 - Storage & Performance Optimization
-**Current Version:** 1.2.0
+**Phase 7 IN PROGRESS:** Storage & Performance Optimization partially complete
+**Just Completed:** Storage indicators, Memory optimization, Performance tools
+**Next Up:** Phase 8 - Security & Privacy
+**Current Version:** 1.2.1
 
 ---
 
@@ -262,6 +265,15 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 - ✅ Tag management interface
 - ✅ Settings icon in toolbar
 - ✅ Dynamic tag dropdown refresh
+
+### Version 1.2.1 (Current)
+- ✅ Storage usage indicator moved to settings
+- ✅ Performance & Storage section with optimization
+- ✅ Memory cleanup functions (90-day auto-cleanup)
+- ✅ Storage statistics and monitoring
+- ✅ Removed content-type border colors
+- ✅ Fixed virtual scrolling issues
+- ✅ Removed unnecessary toast notifications
 
 ### Next Version 1.3.0 (Planned)
 - Advanced markdown rendering

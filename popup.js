@@ -64,6 +64,32 @@ document.addEventListener('DOMContentLoaded', async () => {
       UI.showToast('Failed to load history', 'error');
     }
   }
+  
+  /**
+   * Update storage usage indicator
+   */
+  async function updateStorageIndicator() {
+    const storageData = await chrome.storage.local.getBytesInUse();
+    const maxStorage = chrome.storage.local.QUOTA_BYTES || 5242880; // 5MB default
+    const percentage = Math.round((storageData / maxStorage) * 100);
+    
+    const indicator = document.getElementById('storage-indicator');
+    const fill = document.getElementById('storage-fill');
+    const text = document.getElementById('storage-text');
+    
+    if (fill && text && indicator) {
+      fill.style.width = `${Math.min(percentage, 100)}%`;
+      text.textContent = `${percentage}% used`;
+      
+      // Add warning classes based on usage
+      indicator.classList.remove('warning', 'danger');
+      if (percentage >= 90) {
+        indicator.classList.add('danger');
+      } else if (percentage >= 75) {
+        indicator.classList.add('warning');
+      }
+    }
+  }
 
   /**
    * Set up event listeners
@@ -142,6 +168,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (statsToggle) {
       statsToggle.addEventListener('click', toggleStatsView);
     }
+    
+    // Optimize storage button
+    const optimizeBtn = document.getElementById('optimize-storage');
+    if (optimizeBtn) {
+      optimizeBtn.addEventListener('click', handleOptimizeStorage);
+    }
 
     // Search input is handled by UI module with debouncing
   }
@@ -190,9 +222,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Update overview cards
     document.getElementById('total-items').textContent = history.length;
-    document.getElementById('storage-used').textContent = stats?.usagePercentage + '%' || '0%';
+    document.getElementById('storage-used').textContent = stats?.percentage + '%' || '0%';
     document.getElementById('total-tags').textContent = tags.length;
     document.getElementById('favorite-count').textContent = history.filter(item => item.favorite).length;
+    
+    // Update optimization stats
+    if (stats) {
+      document.getElementById('storage-usage').textContent = `${stats.percentage}%`;
+      document.getElementById('item-count').textContent = `${stats.itemCount}/${stats.remainingItems + stats.itemCount}`;
+      document.getElementById('space-left').textContent = `${Math.round((stats.maxBytes - stats.bytesInUse) / 1024)}KB`;
+      
+      // Update storage indicator bar in settings
+      updateStorageIndicator();
+    }
     
     // Draw activity chart
     drawActivityChart(history);
@@ -616,6 +658,45 @@ document.addEventListener('DOMContentLoaded', async () => {
   function applySettings(settings) {
     // Apply theme if dark mode is implemented in future
     // Apply other settings as needed
+  }
+  
+  /**
+   * Handle storage optimization
+   */
+  async function handleOptimizeStorage() {
+    const optimizeBtn = document.getElementById('optimize-storage');
+    if (!optimizeBtn) return;
+    
+    // Show loading state
+    optimizeBtn.classList.add('loading');
+    optimizeBtn.disabled = true;
+    
+    try {
+      // Perform optimization
+      const results = await Storage.performMemoryOptimization();
+      
+      if (results) {
+        // Show results
+        UI.showToast(
+          `Optimization complete! Saved ${Math.round(results.savedBytes / 1024)}KB (${results.savedPercentage}%)`,
+          'success'
+        );
+        
+        // Reload data
+        await loadClipboardHistory();
+        await loadStatistics();
+        await updateStorageIndicator();
+      } else {
+        UI.showToast('Optimization failed', 'error');
+      }
+    } catch (error) {
+      console.error('Optimization error:', error);
+      UI.showToast('Failed to optimize storage', 'error');
+    } finally {
+      // Remove loading state
+      optimizeBtn.classList.remove('loading');
+      optimizeBtn.disabled = false;
+    }
   }
 
   /**

@@ -547,6 +547,128 @@ const Storage = {
       console.error('Failed to get items by tag:', error);
       return [];
     }
+  },
+
+  /**
+   * Perform memory optimization
+   * Cleans up old data and optimizes storage
+   * @returns {Promise<Object>} Optimization results
+   */
+  async performMemoryOptimization() {
+    try {
+      const results = {
+        removedItems: 0,
+        removedDuplicates: 0,
+        cleanedTags: 0,
+        beforeSize: 0,
+        afterSize: 0
+      };
+
+      // Get current storage size
+      results.beforeSize = await chrome.storage.local.getBytesInUse();
+
+      // 1. Remove very old items (> 90 days)
+      const history = await this.getClipboardHistory();
+      const ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+      const filteredHistory = history.filter(item => {
+        if (!item.pinned && !item.favorite && item.timestamp < ninetyDaysAgo) {
+          results.removedItems++;
+          return false;
+        }
+        return true;
+      });
+
+      // 2. Remove duplicates (keep newest)
+      const seen = new Map();
+      const uniqueHistory = filteredHistory.filter(item => {
+        const key = item.text.trim().toLowerCase();
+        if (seen.has(key)) {
+          const existing = seen.get(key);
+          if (item.timestamp > existing.timestamp) {
+            seen.set(key, item);
+            results.removedDuplicates++;
+            return true;
+          }
+          results.removedDuplicates++;
+          return false;
+        }
+        seen.set(key, item);
+        return true;
+      });
+
+      // 3. Clean up unused tags
+      const allTags = await this.getAllTags();
+      const usedTags = new Set();
+      uniqueHistory.forEach(item => {
+        if (item.tags) {
+          item.tags.forEach(tag => usedTags.add(tag));
+        }
+      });
+      
+      const validTags = allTags.filter(tag => {
+        if (usedTags.has(tag)) {
+          return true;
+        }
+        results.cleanedTags++;
+        return false;
+      });
+
+      // 4. Limit history to max items
+      const settings = await this.getSettings();
+      const maxItems = settings.maxItems || 1000;
+      const limitedHistory = uniqueHistory.slice(0, maxItems);
+
+      // 5. Save optimized data
+      await this.set(this.KEYS.CLIPBOARD_HISTORY, limitedHistory);
+      await this.set(this.KEYS.TAGS, validTags);
+
+      // Get new storage size
+      results.afterSize = await chrome.storage.local.getBytesInUse();
+      results.savedBytes = results.beforeSize - results.afterSize;
+      results.savedPercentage = Math.round((results.savedBytes / results.beforeSize) * 100);
+
+      return results;
+    } catch (error) {
+      console.error('Memory optimization failed:', error);
+      return null;
+    }
+  },
+
+  /**
+   * Compress text data for storage
+   * @param {string} text - Text to compress
+   * @returns {string} Compressed text
+   */
+  compressText(text) {
+    // Simple compression: remove extra whitespace and trim
+    return text
+      .replace(/\s+/g, ' ')
+      .replace(/\n\s*\n/g, '\n')
+      .trim();
+  },
+
+  /**
+   * Get storage statistics
+   * @returns {Promise<Object>} Storage statistics
+   */
+  async getStorageStats() {
+    try {
+      const bytesInUse = await chrome.storage.local.getBytesInUse();
+      const maxBytes = chrome.storage.local.QUOTA_BYTES || 5242880;
+      const history = await this.getClipboardHistory();
+      
+      return {
+        bytesInUse,
+        maxBytes,
+        percentage: Math.round((bytesInUse / maxBytes) * 100),
+        itemCount: history.length,
+        avgItemSize: history.length > 0 ? Math.round(bytesInUse / history.length) : 0,
+        remainingItems: Math.floor((maxBytes - bytesInUse) / (bytesInUse / history.length || 1))
+      };
+    } catch (error) {
+      console.error('Failed to get storage stats:', error);
+      return null;
+    }
   }
 };
 

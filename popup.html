@@ -90,6 +90,45 @@
         </div>
       </div>
       
+      <!-- Performance & Storage Section -->
+      <div class="optimization-section">
+        <h3>Performance & Storage</h3>
+        
+        <!-- Storage Indicator Bar -->
+        <div class="storage-indicator" id="storage-indicator">
+          <div class="storage-bar">
+            <div class="storage-fill" id="storage-fill"></div>
+          </div>
+          <span class="storage-text" id="storage-text">0% used</span>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="optimization-content">
+          <div class="optimization-stats" id="optimization-stats">
+            <div class="stat-item">
+              <span class="stat-label">STORAGE</span>
+              <span class="stat-value" id="storage-usage">0%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">ITEMS</span>
+              <span class="stat-value" id="item-count">0/0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">SPACE LEFT</span>
+              <span class="stat-value" id="space-left">0KB</span>
+            </div>
+          </div>
+          <button id="optimize-storage" class="btn-optimize">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            Optimize Storage
+          </button>
+        </div>
+      </div>
+      
       <!-- Overview Cards -->
       <div class="stats-overview">
         <div class="stat-card">
@@ -159,6 +198,7 @@
   <script src="js/icons.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/virtualScroll.js"></script>
   <script src="js/ui.js"></script>
   <script src="popup.js"></script>
 </body>
