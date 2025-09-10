@@ -390,15 +390,6 @@ main {
   gap: 8px;
 }
 
-/* Virtual Scrolling Active */
-#clipboard-list.virtual-scrolling {
-  gap: 0;
-}
-
-#clipboard-list.virtual-scrolling .clipboard-item {
-  margin-bottom: 8px;
-}
-
 /* Clipboard Item */
 .clipboard-item,
 #clipboard-list > li:not(.empty-state):not(.loading) {

@@ -672,12 +672,6 @@ const UI = {
    * @param {Array} items - Items to render
    */
   renderAllItems(items) {
-    // Clean up virtual scrolling if it was active
-    if (this.virtualScrollHandler) {
-      window.removeEventListener('scroll', this.virtualScrollHandler);
-      this.virtualScrollHandler = null;
-    }
-    
     this.elements.list.innerHTML = '';
     this.elements.list.style.position = '';
     this.elements.list.classList.remove('virtual-scrolling');

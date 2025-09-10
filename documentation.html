@@ -3,92 +3,457 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clipboard Manager Chrome Extension Documentation</title>
+  <title>Clipboard Manager - Complete Documentation</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       line-height: 1.6;
-      max-width: 800px;
+      background: #0a0a0a;
+      color: #f4f4f4;
+      font-size: 16px;
+    }
+    
+    .container {
+      max-width: 900px;
       margin: 0 auto;
-      padding: 20px;
-      background-color: #f9f9f9;
-      color: #333;
-      font-size: 1rem;
-
+      padding: 40px 20px;
     }
-    h1, h2, h3 {
-      color: #007bff;
+    
+    header {
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 30px;
+      margin-bottom: 40px;
     }
+    
+    h1 {
+      font-size: 2.5rem;
+      color: #3ecf8e;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    h2 {
+      font-size: 1.8rem;
+      color: #3ecf8e;
+      margin: 30px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #2a2a2a;
+    }
+    
+    h3 {
+      font-size: 1.3rem;
+      color: #3b82f6;
+      margin: 20px 0 12px;
+    }
+    
     p {
       margin-bottom: 15px;
+      color: #b4b4b4;
+      line-height: 1.8;
     }
-    ul {
-      list-style-type: disc;
-      margin-left: 20px;
+    
+    ul, ol {
+      margin: 15px 0 20px 30px;
+      color: #b4b4b4;
     }
+    
+    li {
+      margin-bottom: 10px;
+      line-height: 1.8;
+    }
+    
+    strong {
+      color: #f4f4f4;
+      font-weight: 600;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .feature-card {
+      background: linear-gradient(135deg, #1a1a1a 0%, #262626 100%);
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      padding: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(62, 207, 142, 0.1);
+      border-color: #3ecf8e;
+    }
+    
+    .feature-card h4 {
+      color: #3ecf8e;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+    
+    .feature-card p {
+      font-size: 0.95rem;
+      color: #888;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #3ecf8e;
+      color: #000;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    
+    .badge.new {
+      background: #3b82f6;
+    }
+    
+    .badge.beta {
+      background: #f59e0b;
+    }
+    
+    .keyboard-shortcut {
+      display: inline-block;
+      padding: 3px 8px;
+      background: #2a2a2a;
+      border: 1px solid #3a3a3a;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: #3ecf8e;
+      margin: 0 3px;
+    }
+    
+    .section {
+      margin-bottom: 50px;
+    }
+    
+    .warning {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 3px solid #f59e0b;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    
+    .info {
+      background: rgba(59, 130, 246, 0.1);
+      border-left: 3px solid #3b82f6;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    
+    footer {
+      margin-top: 60px;
+      padding-top: 30px;
+      border-top: 1px solid #2a2a2a;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
     a {
-      color: #007bff;
+      color: #3ecf8e;
       text-decoration: none;
+      transition: color 0.2s;
     }
+    
     a:hover {
+      color: #35b67a;
       text-decoration: underline;
     }
-    .section {
-      margin-bottom: 30px;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 20px;
+    
+    code {
+      background: #2a2a2a;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      color: #3ecf8e;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    
+    th {
+      background: #1a1a1a;
+      color: #3ecf8e;
+      font-weight: 600;
+    }
+    
+    tr:hover {
+      background: rgba(62, 207, 142, 0.05);
     }
   </style>
 </head>
 <body>
-  <header style="border-bottom: 1px solid #ccc;">
-    <h1 style="display: flex; align-items: center;"><img src="icon-documentation-title.png" alt="Clipboard Manager Extension Icon" style="margin-right: 10px;">Clipboard Manager Documentation</h1>
-    <p>Welcome to the comprehensive documentation for the Clipboard Manager Chrome extension. Learn how to effectively manage your clipboard history and make the most out of its features.</p>
-  </header>
+  <div class="container">
+    <header>
+      <h1>📋 Clipboard Manager v1.2.1</h1>
+      <p style="font-size: 1.2rem; color: #888;">Advanced clipboard management with modern features for power users</p>
+    </header>
 
-  <section class="section">
-    <h2>Getting Started</h2>
-    <p>Quickly get up and running with the Clipboard Manager extension. Follow these steps to begin managing your clipboard history:</p>
-    <ol>
-      <li><strong>Installation:</strong> Add the extension to your Chrome browser from the Chrome Web Store.</li>
-      <li><strong>Accessing the Extension:</strong> Simply click on the Clipboard Manager icon in the toolbar (you can also pin it from the Extensions list in Google Chrome) to open the popup window for quick access.</li>
-      <li><strong>Using Clipboard History:</strong> Save, search, filter, and manage clipboard items directly from the popup interface.</li>
-    </ol>
-  </section>
+    <section class="section">
+      <h2>🚀 Getting Started</h2>
+      <p>Welcome to Clipboard Manager - your intelligent clipboard history companion. Follow these steps to unlock powerful clipboard management:</p>
+      
+      <ol>
+        <li><strong>Installation:</strong> Add the extension from the Chrome Web Store or load it as an unpacked extension</li>
+        <li><strong>Pin the Extension:</strong> Click the puzzle piece icon in Chrome's toolbar and pin Clipboard Manager for easy access</li>
+        <li><strong>First Use:</strong> Click the extension icon to open the popup - your clipboard history starts recording immediately</li>
+        <li><strong>Save Content:</strong> Copy any text, then click the <strong>SAVE</strong> button to store it permanently</li>
+      </ol>
+      
+      <div class="info">
+        <strong>💡 Pro Tip:</strong> The extension stores up to 1000 items by default. Use tags and favorites to organize important snippets!
+      </div>
+    </section>
 
-  <section class="section">
-    <h2>Features Overview</h2>
-    <p>Explore the powerful features of the Clipboard Manager extension:</p>
-    <ul>
-      <li><strong>Clipboard History:</strong> Each clipboard item is saved with a timestamp indicating when it was copied for easy reference.</li>
-      <li><strong>Search:</strong> Quickly find specific clipboard items using the search bar.</li>
-      <li><strong>Filter:</strong> Use filter options to refine your clipboard history based on various criteria.</li>
-      <li><strong>Save:</strong> Save important clipboard snippets for future reference.</li>
-      <li><strong>Clear or Delete:</strong> Easily clear your whole clipboard history when needed or simply delete any item from your list by clicking on the red button <img src="icon-delete-24.png" alt="Delete"> on each one of your saved items. When clearing the entire history, a confirmation modal will be displayed to prevent accidental clearing.</li>
-      <li><strong>Export:</strong> Export clipboard history to a text file for backup or sharing purposes.</li>
-      <li><strong>Favorite:</strong> Easily mark <img src="icon-favorite.png" alt="Add to Favorites"> important clipboard items as favorites for quick access and reference. You can also choose to display only your favorite items for streamlined management. You can click again on the same button <img src="icon-favorite-filled.png" alt="Remove From Favorites"> to remove the item from your favorites list.</li>
-      <li><strong>Copy from List:</strong> Click on any text item in the list to automatically copy it to your clipboard, making it easy to reuse your saved snippets.</li>
-    </ul>
-  </section>
+    <section class="section">
+      <h2>✨ Core Features</h2>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h4>📝 Smart Clipboard History</h4>
+          <p>Automatically saves clipboard items with timestamps, metadata, and intelligent content detection</p>
+        </div>
+        
+        <div class="feature-card">
+          <h4>🔍 Instant Search</h4>
+          <p>Real-time search with 300ms debouncing for smooth performance across your entire history</p>
+        </div>
+        
+        <div class="feature-card">
+          <h4>⭐ Favorites System</h4>
+          <p>Mark important items as favorites for quick access. Favorites are protected from auto-cleanup</p>
+        </div>
+        
+        <div class="feature-card">
+          <h4>📌 Pin Items</h4>
+          <p>Pin frequently used items to keep them always at the top of your list</p>
+        </div>
+        
+        <div class="feature-card">
+          <h4>🏷️ Tags & Organization</h4>
+          <p>Add custom tags to categorize items. Filter by tags for instant access to related content</p>
+        </div>
+        
+        <div class="feature-card">
+          <h4>📊 Statistics Dashboard</h4>
+          <p>Track usage patterns, storage consumption, and manage your clipboard data efficiently</p>
+        </div>
+      </div>
+    </section>
 
-  <section class="section">
-    <h2>Privacy and Security</h2>
-    <p>We value your privacy and handle your data responsibly:</p>
-    <ul>
-      <li><strong>Data Storage:</strong> Clipboard items are stored locally on your device using Chrome's storage API. We do not transfer or store data on external servers.</li>
-      <li><strong>Data Security:</strong> Your clipboard history is encrypted and only accessible to you through the extension interface.</li>
-      <li><strong>Data Usage:</strong> We do not collect or track any personal information from your clipboard history. The extension focuses solely on functionality.</li>
-    </ul>
-    <p>For more details, please review our <a href="privacy_policy.html">Privacy Policy</a>.</p>
-  </section>
+    <section class="section">
+      <h2>🎯 Advanced Features</h2>
+      
+      <h3>Bulk Operations <span class="badge new">NEW</span></h3>
+      <p>Select multiple items at once for batch operations:</p>
+      <ul>
+        <li>Click <strong>SELECT</strong> to enable bulk mode</li>
+        <li>Check multiple items using the checkboxes</li>
+        <li>Apply bulk actions: Pin/Unpin, Favorite/Unfavorite, Delete</li>
+        <li>Use "Select All" or "Select None" for quick selection</li>
+      </ul>
+      
+      <h3>Rich Text Preview <span class="badge new">NEW</span></h3>
+      <p>View formatted content with syntax highlighting:</p>
+      <ul>
+        <li>Click the eye icon to expand preview</li>
+        <li>Supports Markdown rendering</li>
+        <li>Code syntax highlighting for multiple languages</li>
+        <li>Shows word count, character count, and content statistics</li>
+      </ul>
+      
+      <h3>Smart Filtering</h3>
+      <p>Multiple filter options to find exactly what you need:</p>
+      <ul>
+        <li><strong>All Items:</strong> Complete history view</li>
+        <li><strong>Recent:</strong> Items from the last 24 hours</li>
+        <li><strong>Oldest:</strong> Your first saved items</li>
+        <li><strong>Favorites:</strong> Starred items only</li>
+        <li><strong>URLs:</strong> Web links and addresses</li>
+        <li><strong>Code:</strong> Detected code snippets</li>
+        <li><strong>Tags:</strong> Filter by specific tags</li>
+      </ul>
+      
+      <h3>Import & Export</h3>
+      <ul>
+        <li><strong>Export:</strong> Save your clipboard history as JSON or TXT</li>
+        <li><strong>Import:</strong> Load clipboard items from JSON/TXT files</li>
+        <li>Automatic validation and duplicate detection</li>
+        <li>Preserves timestamps, tags, and favorites</li>
+      </ul>
+    </section>
 
-  <section class="section">
-    <h2>Support and Feedback</h2>
-    <p>For support, questions, or feedback, please <a href="mailto:wissam.yahfoufi@gmail.com">contact</a> our team. We appreciate your input and strive to improve our extension based on users feedbacks.</p>
-  </section>
+    <section class="section">
+      <h2>⚡ Performance & Storage</h2>
+      
+      <h3>Storage Management <span class="badge new">NEW</span></h3>
+      <p>Advanced storage optimization features:</p>
+      <ul>
+        <li><strong>Real-time monitoring:</strong> Track storage usage in the settings panel</li>
+        <li><strong>Automatic cleanup:</strong> Removes items older than 90 days (excludes favorites/pins)</li>
+        <li><strong>Duplicate detection:</strong> Automatically identifies and removes duplicate entries</li>
+        <li><strong>Optimize button:</strong> Manual cleanup to free up space instantly</li>
+        <li><strong>Compression:</strong> Text data is compressed for efficient storage</li>
+      </ul>
+      
+      <div class="warning">
+        <strong>⚠️ Storage Limits:</strong> Chrome extensions have a 5MB storage limit. The extension monitors usage and warns when approaching limits.
+      </div>
+    </section>
 
-  <footer style="text-align: center; color: #6a6a6a; font-size: 0.87rem;">
-    <p>&copy; 2024 Clipboard Manager. All rights reserved.</p>
-  </footer>
+    <section class="section">
+      <h2>⌨️ Keyboard Navigation</h2>
+      <p>Navigate efficiently without touching your mouse:</p>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Shortcut</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="keyboard-shortcut">↑</span> <span class="keyboard-shortcut">↓</span></td>
+            <td>Navigate between items</td>
+          </tr>
+          <tr>
+            <td><span class="keyboard-shortcut">Enter</span></td>
+            <td>Copy selected item to clipboard</td>
+          </tr>
+          <tr>
+            <td><span class="keyboard-shortcut">Delete</span></td>
+            <td>Delete selected item</td>
+          </tr>
+          <tr>
+            <td><span class="keyboard-shortcut">Ctrl</span> + <span class="keyboard-shortcut">F</span></td>
+            <td>Focus search box</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>🏷️ Tags System</h2>
+      <p>Organize your clipboard with a powerful tagging system:</p>
+      
+      <h3>Adding Tags</h3>
+      <ol>
+        <li>Click "Add tag" button on any item</li>
+        <li>Type tag name (autocomplete suggests existing tags)</li>
+        <li>Press Enter to add the tag</li>
+        <li>Tags are color-coded automatically (10 color palette)</li>
+      </ol>
+      
+      <h3>Managing Tags</h3>
+      <ul>
+        <li>Click × on any tag to remove it from an item</li>
+        <li>Access Tag Management in the Settings panel</li>
+        <li>Remove unused tags from the global system</li>
+        <li>Filter by tags using the dropdown menu</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>📊 Statistics Dashboard</h2>
+      <p>Access comprehensive insights about your clipboard usage:</p>
+      
+      <ol>
+        <li>Click the <strong>Settings</strong> icon (gear) in the top-right</li>
+        <li>View real-time statistics including:
+          <ul>
+            <li>Total items stored</li>
+            <li>Storage usage percentage</li>
+            <li>Number of tags created</li>
+            <li>Favorite items count</li>
+            <li>7-day activity chart</li>
+            <li>Content type distribution</li>
+          </ul>
+        </li>
+        <li>Manage tags and optimize storage from this view</li>
+      </ol>
+    </section>
+
+    <section class="section">
+      <h2>🎨 User Interface</h2>
+      <p>Modern, dark-themed interface inspired by Supabase design:</p>
+      
+      <ul>
+        <li><strong>Dark Mode:</strong> Easy on the eyes with OLED-friendly pure blacks</li>
+        <li><strong>Smooth Animations:</strong> 150ms transitions throughout</li>
+        <li><strong>Visual Feedback:</strong> Hover effects, loading states, and success indicators</li>
+        <li><strong>Responsive Layout:</strong> Optimized for the 500x600px extension popup</li>
+        <li><strong>Professional Icons:</strong> SVG icons for all actions</li>
+        <li><strong>Empty States:</strong> Helpful messages when no data is available</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>🔧 Troubleshooting</h2>
+      
+      <h3>Common Issues</h3>
+      <ul>
+        <li><strong>Clipboard not saving:</strong> Ensure you've granted clipboard permissions</li>
+        <li><strong>Storage full:</strong> Use the Optimize Storage button to clean up old items</li>
+        <li><strong>Search not working:</strong> Wait for the 300ms debounce delay</li>
+        <li><strong>Tags not appearing:</strong> Refresh the extension if tags don't update</li>
+      </ul>
+      
+      <h3>Performance Tips</h3>
+      <ul>
+        <li>Keep your history under 500 items for best performance</li>
+        <li>Use the optimization feature monthly</li>
+        <li>Remove unused tags regularly</li>
+        <li>Export and backup important data periodically</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>📧 Support & Feedback</h2>
+      <p>We're constantly improving Clipboard Manager based on user feedback:</p>
+      
+      <ul>
+        <li><strong>Report Issues:</strong> <a href="https://github.com/wissamyah/clipboard-manager/issues">GitHub Issues</a></li>
+        <li><strong>Email Support:</strong> <a href="mailto:wissam.yahfoufi@gmail.com">wissam.yahfoufi@gmail.com</a></li>
+        <li><strong>Feature Requests:</strong> Open an issue on GitHub with the "enhancement" label</li>
+      </ul>
+      
+      <div class="info">
+        <strong>🔄 Version 1.2.1</strong> - Latest update includes storage optimization, performance improvements, and bug fixes.
+      </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2024 Clipboard Manager. All rights reserved.</p>
+      <p>Created with ❤️ for productivity enthusiasts</p>
+    </footer>
+  </div>
 </body>
 </html>
