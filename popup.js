@@ -132,7 +132,255 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     }
 
+    // Stats toggle button
+    const statsToggle = document.getElementById('stats-toggle');
+    if (statsToggle) {
+      statsToggle.addEventListener('click', toggleStatsView);
+    }
+
     // Search input is handled by UI module with debouncing
+  }
+
+  /**
+   * Toggle between clipboard and stats view
+   */
+  function toggleStatsView() {
+    const clipboardView = document.getElementById('clipboard-view');
+    const statsView = document.getElementById('stats-view');
+    const statsToggle = document.getElementById('stats-toggle');
+    const searchFilter = document.querySelector('.search-filter');
+    
+    if (statsView.style.display === 'none') {
+      // Show stats view
+      clipboardView.style.display = 'none';
+      statsView.style.display = 'block';
+      statsToggle.textContent = 'BACK';
+      statsToggle.classList.add('active');
+      
+      // Hide search/filter in stats view
+      if (searchFilter) searchFilter.style.display = 'none';
+      
+      // Load statistics
+      loadStatistics();
+      loadTagManagement();
+    } else {
+      // Show clipboard view
+      statsView.style.display = 'none';
+      clipboardView.style.display = 'block';
+      statsToggle.textContent = 'STATS';
+      statsToggle.classList.remove('active');
+      
+      // Show search/filter
+      if (searchFilter) searchFilter.style.display = 'flex';
+    }
+  }
+
+  /**
+   * Load and display statistics
+   */
+  async function loadStatistics() {
+    const history = await Storage.getClipboardHistory();
+    const stats = await Storage.getStorageStats();
+    const tags = await Storage.getAllTags();
+    
+    // Update overview cards
+    document.getElementById('total-items').textContent = history.length;
+    document.getElementById('storage-used').textContent = stats?.usagePercentage + '%' || '0%';
+    document.getElementById('total-tags').textContent = tags.length;
+    document.getElementById('favorite-count').textContent = history.filter(item => item.favorite).length;
+    
+    // Draw activity chart
+    drawActivityChart(history);
+    
+    // Draw type distribution
+    drawTypeChart(history);
+  }
+
+  /**
+   * Draw 7-day activity chart
+   */
+  function drawActivityChart(history) {
+    const canvas = document.getElementById('activity-chart');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const now = new Date();
+    const days = [];
+    const counts = [];
+    
+    // Get last 7 days
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      date.setHours(0, 0, 0, 0);
+      
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+      
+      const dayCount = history.filter(item => {
+        const itemDate = new Date(item.timestamp);
+        return itemDate >= date && itemDate < nextDate;
+      }).length;
+      
+      days.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+      counts.push(dayCount);
+    }
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw bars
+    const maxCount = Math.max(...counts, 1);
+    const barWidth = 50;
+    const barSpacing = 15;
+    const chartHeight = 120;
+    
+    counts.forEach((count, index) => {
+      const barHeight = (count / maxCount) * chartHeight;
+      const x = index * (barWidth + barSpacing) + 20;
+      const y = chartHeight - barHeight + 10;
+      
+      // Draw bar
+      ctx.fillStyle = '#3ecf8e';
+      ctx.fillRect(x, y, barWidth, barHeight);
+      
+      // Draw count label
+      ctx.fillStyle = '#888888';
+      ctx.font = '11px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(count, x + barWidth / 2, y - 5);
+      
+      // Draw day label
+      ctx.fillText(days[index], x + barWidth / 2, chartHeight + 25);
+    });
+  }
+
+  /**
+   * Draw content type distribution
+   */
+  function drawTypeChart(history) {
+    const typeChart = document.getElementById('type-chart');
+    if (!typeChart) return;
+    
+    // Count types
+    const typeCounts = {};
+    history.forEach(item => {
+      const type = item.type || 'text';
+      typeCounts[type] = (typeCounts[type] || 0) + 1;
+    });
+    
+    // Create simple CSS pie chart
+    const total = history.length || 1;
+    const colors = {
+      text: '#3ecf8e',
+      url: '#3b82f6',
+      email: '#f59e0b',
+      code: '#8b5cf6',
+      phone: '#ec4899'
+    };
+    
+    let html = '<div class="pie-chart-container">';
+    let currentAngle = 0;
+    
+    Object.entries(typeCounts).forEach(([type, count]) => {
+      const percentage = (count / total) * 100;
+      const color = colors[type] || '#888888';
+      
+      html += `
+        <div class="pie-slice" style="
+          --percentage: ${percentage};
+          --color: ${color};
+          --rotation: ${currentAngle};
+        "></div>
+      `;
+      currentAngle += percentage * 3.6; // Convert to degrees
+    });
+    
+    html += '</div><div class="pie-legend">';
+    
+    Object.entries(typeCounts).forEach(([type, count]) => {
+      const percentage = Math.round((count / total) * 100);
+      const color = colors[type] || '#888888';
+      html += `
+        <div class="legend-item">
+          <span class="legend-color" style="background: ${color}"></span>
+          <span class="legend-label">${type}</span>
+          <span class="legend-value">${percentage}%</span>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    typeChart.innerHTML = html;
+  }
+
+  /**
+   * Load tag management
+   */
+  async function loadTagManagement() {
+    const tags = await Storage.getAllTags();
+    const tagColors = await Storage.getTagColors();
+    const tagList = document.getElementById('tag-list');
+    
+    if (!tagList) return;
+    
+    if (tags.length === 0) {
+      tagList.innerHTML = '<div class="empty-tags">No tags created yet</div>';
+      return;
+    }
+    
+    tagList.innerHTML = '';
+    tags.forEach(tag => {
+      const tagItem = document.createElement('div');
+      tagItem.classList.add('tag-manager-item');
+      tagItem.style.backgroundColor = tagColors[tag] || '#3ecf8e';
+      
+      const tagText = document.createElement('span');
+      tagText.textContent = tag;
+      
+      const deleteBtn = document.createElement('button');
+      deleteBtn.classList.add('tag-delete-btn');
+      deleteBtn.innerHTML = `
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      `;
+      deleteBtn.addEventListener('click', async () => {
+        await removeTag(tag);
+        await loadTagManagement();
+        await loadTagFilters();
+        UI.showToast(`Tag "${tag}" removed`, 'success');
+      });
+      
+      tagItem.appendChild(tagText);
+      tagItem.appendChild(deleteBtn);
+      tagList.appendChild(tagItem);
+    });
+  }
+
+  /**
+   * Remove a tag from system
+   */
+  async function removeTag(tagToRemove) {
+    // Remove from global tags list
+    const tags = await Storage.getAllTags();
+    const updatedTags = tags.filter(tag => tag !== tagToRemove);
+    await Storage.set(Storage.KEYS.TAGS, updatedTags);
+    
+    // Remove from tag colors
+    const colors = await Storage.getTagColors();
+    delete colors[tagToRemove];
+    await Storage.set(Storage.KEYS.TAG_COLORS, colors);
+    
+    // Remove from all items
+    const history = await Storage.getClipboardHistory();
+    history.forEach(item => {
+      if (item.tags) {
+        item.tags = item.tags.filter(tag => tag !== tagToRemove);
+      }
+    });
+    await Storage.set(Storage.KEYS.CLIPBOARD_HISTORY, history);
   }
 
   /**

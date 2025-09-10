@@ -31,6 +31,7 @@
       </div>
       <div class="buttons">
         <button id="save-clipboard" class="btn-primary">SAVE</button>
+        <button id="stats-toggle" class="btn-secondary" title="Statistics">STATS</button>
         <button id="bulk-mode-toggle" class="btn-secondary" title="Bulk Selection">SELECT</button>
         <button id="import-clipboard" class="btn-secondary">IMPORT</button>
         <button id="export-clipboard" class="btn-secondary">EXPORT</button>
@@ -40,37 +41,86 @@
   </header>
   
   <main>
-    <!-- Bulk operations toolbar -->
-    <div id="bulk-toolbar" class="bulk-toolbar" style="display: none;">
-      <div class="bulk-controls">
-        <span class="bulk-count">0 selected</span>
-        <button id="bulk-select-all" class="bulk-btn">Select All</button>
-        <button id="bulk-select-none" class="bulk-btn">Select None</button>
+    <!-- Clipboard View -->
+    <div id="clipboard-view" class="view active">
+      <!-- Bulk operations toolbar -->
+      <div id="bulk-toolbar" class="bulk-toolbar" style="display: none;">
+        <div class="bulk-controls">
+          <span class="bulk-count">0 selected</span>
+          <button id="bulk-select-all" class="bulk-btn">Select All</button>
+          <button id="bulk-select-none" class="bulk-btn">Select None</button>
+        </div>
+        <div class="bulk-actions">
+          <button id="bulk-pin" class="bulk-action-btn" title="Pin/Unpin">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="17" x2="12" y2="22"></line>
+              <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+            </svg>
+          </button>
+          <button id="bulk-favorite" class="bulk-action-btn" title="Favorite/Unfavorite">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </button>
+          <button id="bulk-delete" class="bulk-action-btn bulk-delete" title="Delete">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
       </div>
-      <div class="bulk-actions">
-        <button id="bulk-pin" class="bulk-action-btn" title="Pin/Unpin">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="12" y1="17" x2="12" y2="22"></line>
-            <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
-          </svg>
-        </button>
-        <button id="bulk-favorite" class="bulk-action-btn" title="Favorite/Unfavorite">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
-        </button>
-        <button id="bulk-delete" class="bulk-action-btn bulk-delete" title="Delete">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-          </svg>
-        </button>
-      </div>
+      
+      <ul id="clipboard-list" role="list" aria-live="polite">
+        <!-- Dynamic Clipboard history items -->
+      </ul>
     </div>
     
-    <ul id="clipboard-list" role="list" aria-live="polite">
-      <!-- Dynamic Clipboard history items -->
-    </ul>
+    <!-- Statistics View -->
+    <div id="stats-view" class="view" style="display: none;">
+      <!-- Overview Cards -->
+      <div class="stats-overview">
+        <div class="stat-card">
+          <div class="stat-value" id="total-items">0</div>
+          <div class="stat-label">Total Items</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="storage-used">0%</div>
+          <div class="stat-label">Storage Used</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="total-tags">0</div>
+          <div class="stat-label">Total Tags</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="favorite-count">0</div>
+          <div class="stat-label">Favorites</div>
+        </div>
+      </div>
+      
+      <!-- Charts Section -->
+      <div class="stats-charts">
+        <!-- Activity Chart -->
+        <div class="chart-container">
+          <h3>7-Day Activity</h3>
+          <canvas id="activity-chart" width="450" height="150"></canvas>
+        </div>
+        
+        <!-- Content Type Distribution -->
+        <div class="chart-container">
+          <h3>Content Types</h3>
+          <div id="type-chart" class="pie-chart"></div>
+        </div>
+      </div>
+      
+      <!-- Tag Management Section -->
+      <div class="tag-management">
+        <h3>Tag Management</h3>
+        <div id="tag-list" class="tag-manager-list">
+          <!-- Dynamic tag list with delete buttons -->
+        </div>
+      </div>
+    </div>
   </main>
   
   <!-- Modal for confirmation of clearing clipboard history -->
