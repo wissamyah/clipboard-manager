@@ -134,18 +134,23 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
    - [x] Tag persistence across sessions
    - [x] Fixed mousedown event for suggestions
 
-### In Progress:
-3. **Rich Text Preview**:
-   - [ ] Markdown rendering
-   - [ ] Syntax highlighting for code
-   - [ ] Image preview in clipboard
-   - [ ] Link preview cards
+### Completed Features (cont.):
+3. **Rich Text Preview** ✅:
+   - [x] Markdown rendering with marked library
+   - [x] Syntax highlighting for code snippets
+   - [x] Preview pane with eye icon toggle
+   - [x] Statistics display (word count, character count)
+   - [x] Content type detection and display
 
-4. **Statistics Dashboard**:
-   - [ ] Usage statistics
-   - [ ] Most copied items
-   - [ ] Daily/weekly activity
-   - [ ] Storage usage charts
+4. **Statistics Dashboard** ✅:
+   - [x] Usage statistics overview cards
+   - [x] Storage usage percentage display
+   - [x] 7-day activity chart with Canvas API
+   - [x] Content type distribution pie chart
+   - [x] Tag management interface
+   - [x] Remove unused tags from system
+   - [x] Settings icon in toolbar
+   - [x] Dynamic tag dropdown refresh
 
 ---
 
@@ -229,10 +234,10 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 ---
 
 ## 🎯 Current Status
-**Active Development:** Phase 6 - Advanced Features (Bulk Operations)
-**Just Completed:** Keyboard Navigation, Pin System, Import Feature
-**Next Up:** Bulk selection and operations
-**Target Version:** 1.2.0
+**Phase 6 COMPLETED:** All Advanced Features implemented
+**Just Completed:** Rich Text Preview, Statistics Dashboard, Tag Management
+**Next Up:** Phase 7 - Storage & Performance Optimization
+**Current Version:** 1.2.0
 
 ---
 
@@ -249,11 +254,14 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 - Smart text truncation
 - Professional SVG icons
 
-### Version 1.2.0 (Current)
-- ✅ Bulk operations (complete)
-- ✅ Tags system (complete)
-- ⚡ Rich text preview (in progress)
-- ⏳ Statistics dashboard (planned)
+### Version 1.2.0 (Released)
+- ✅ Bulk operations with multi-select
+- ✅ Tags system with autocomplete
+- ✅ Rich text preview with markdown
+- ✅ Statistics dashboard with charts
+- ✅ Tag management interface
+- ✅ Settings icon in toolbar
+- ✅ Dynamic tag dropdown refresh
 
 ### Next Version 1.3.0 (Planned)
 - Advanced markdown rendering

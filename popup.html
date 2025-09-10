@@ -31,11 +31,15 @@
       </div>
       <div class="buttons">
         <button id="save-clipboard" class="btn-primary">SAVE</button>
-        <button id="stats-toggle" class="btn-secondary" title="Statistics">STATS</button>
         <button id="bulk-mode-toggle" class="btn-secondary" title="Bulk Selection">SELECT</button>
         <button id="import-clipboard" class="btn-secondary">IMPORT</button>
         <button id="export-clipboard" class="btn-secondary">EXPORT</button>
         <button id="clear-clipboard" class="btn-secondary">CLEAR</button>
+        <button id="stats-toggle" class="btn-icon" title="Settings & Tag Management">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.03-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.63l-2-3.46a.5.5 0 0 0-.61-.22l-2.49 1a7.02 7.02 0 0 0-1.69-.98l-.38-2.65a.5.5 0 0 0-.5-.42h-4a.5.5 0 0 0-.5.42l-.38 2.65a7.02 7.02 0 0 0-1.69.98l-2.49-1a.5.5 0 0 0-.61.22l-2 3.46a.5.5 0 0 0 .12.63l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65a.5.5 0 0 0-.12.63l2 3.46c.14.24.42.34.61.22l2.49-1c.5.39 1.06.72 1.69.98l.38 2.65c.04.27.25.42.5.42h4c.25 0 .46-.15.5-.42l.38-2.65c.63-.26 1.19-.59 1.69-.98l2.49 1c.19.12.47.02.61-.22l2-3.46a.5.5 0 0 0-.12-.63l-2.11-1.65zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
+          </svg>
+        </button>
       </div>
     </div>
   </header>
@@ -78,6 +82,14 @@
     
     <!-- Statistics View -->
     <div id="stats-view" class="view" style="display: none;">
+      <!-- Tag Management Section (moved to top) -->
+      <div class="tag-management">
+        <h3>Tag Management</h3>
+        <div id="tag-list" class="tag-manager-list">
+          <!-- Dynamic tag list with delete buttons -->
+        </div>
+      </div>
+      
       <!-- Overview Cards -->
       <div class="stats-overview">
         <div class="stat-card">
@@ -86,11 +98,11 @@
         </div>
         <div class="stat-card">
           <div class="stat-value" id="storage-used">0%</div>
-          <div class="stat-label">Storage Used</div>
+          <div class="stat-label">Storage</div>
         </div>
         <div class="stat-card">
           <div class="stat-value" id="total-tags">0</div>
-          <div class="stat-label">Total Tags</div>
+          <div class="stat-label">Tags</div>
         </div>
         <div class="stat-card">
           <div class="stat-value" id="favorite-count">0</div>
@@ -101,23 +113,15 @@
       <!-- Charts Section -->
       <div class="stats-charts">
         <!-- Activity Chart -->
-        <div class="chart-container">
+        <div class="chart-container activity-chart">
           <h3>7-Day Activity</h3>
           <canvas id="activity-chart" width="450" height="150"></canvas>
         </div>
         
         <!-- Content Type Distribution -->
-        <div class="chart-container">
+        <div class="chart-container type-chart">
           <h3>Content Types</h3>
           <div id="type-chart" class="pie-chart"></div>
-        </div>
-      </div>
-      
-      <!-- Tag Management Section -->
-      <div class="tag-management">
-        <h3>Tag Management</h3>
-        <div id="tag-list" class="tag-manager-list">
-          <!-- Dynamic tag list with delete buttons -->
         </div>
       </div>
     </div>

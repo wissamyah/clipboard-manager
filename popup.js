@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize UI
   UI.init();
   
+  // Set up callback for tag changes
+  UI.onTagsChanged = async () => {
+    await loadTagFilters();
+  };
+  
   // Main application state
   let clipboardHistory = [];
 
@@ -279,24 +284,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       phone: '#ec4899'
     };
     
-    let html = '<div class="pie-chart-container">';
+    // Calculate percentages and create gradient
     let currentAngle = 0;
+    const gradientParts = [];
     
     Object.entries(typeCounts).forEach(([type, count]) => {
       const percentage = (count / total) * 100;
+      const angle = (percentage / 100) * 360;
       const color = colors[type] || '#888888';
-      
-      html += `
-        <div class="pie-slice" style="
-          --percentage: ${percentage};
-          --color: ${color};
-          --rotation: ${currentAngle};
-        "></div>
-      `;
-      currentAngle += percentage * 3.6; // Convert to degrees
+      if (percentage > 0) {
+        gradientParts.push(`${color} ${currentAngle}deg ${currentAngle + angle}deg`);
+        currentAngle += angle;
+      }
     });
     
-    html += '</div><div class="pie-legend">';
+    // Create pie chart and legend
+    let html = gradientParts.length > 0 
+      ? `<div class="pie-slice" style="background: conic-gradient(${gradientParts.join(', ')})"></div>`
+      : '<div class="pie-slice" style="background: #3ecf8e"></div>';
+      
+    html += '<div class="pie-legend">';
     
     Object.entries(typeCounts).forEach(([type, count]) => {
       const percentage = Math.round((count / total) * 100);

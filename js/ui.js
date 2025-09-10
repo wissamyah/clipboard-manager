@@ -505,6 +505,10 @@ const UI = {
     if (success) {
       this.showToast(`Tag "${tag}" added`, 'success');
       this.refreshDisplay();
+      // Trigger tag filters refresh if callback is provided
+      if (this.onTagsChanged) {
+        this.onTagsChanged();
+      }
     } else {
       this.showToast('Failed to add tag', 'error');
     }
@@ -520,6 +524,10 @@ const UI = {
     if (success) {
       this.showToast(`Tag "${tag}" removed`, 'success');
       this.refreshDisplay();
+      // Trigger tag filters refresh if callback is provided
+      if (this.onTagsChanged) {
+        this.onTagsChanged();
+      }
     } else {
       this.showToast('Failed to remove tag', 'error');
     }
