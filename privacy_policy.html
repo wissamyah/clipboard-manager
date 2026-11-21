@@ -3,424 +3,246 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy - Clipboard Manager v1.2.1</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      line-height: 1.6;
-      background: #0a0a0a;
-      color: #f4f4f4;
-      font-size: 16px;
-    }
-    
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-    
-    header {
-      border-bottom: 1px solid #2a2a2a;
-      padding-bottom: 30px;
-      margin-bottom: 40px;
-    }
-    
-    h1 {
-      font-size: 2.5rem;
-      color: #3ecf8e;
-      margin-bottom: 15px;
-    }
-    
-    h2 {
-      font-size: 1.8rem;
-      color: #3ecf8e;
-      margin: 30px 0 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #2a2a2a;
-    }
-    
-    h3 {
-      font-size: 1.3rem;
-      color: #3b82f6;
-      margin: 20px 0 12px;
-    }
-    
-    p {
-      margin-bottom: 15px;
-      color: #b4b4b4;
-      line-height: 1.8;
-    }
-    
-    ul {
-      margin: 15px 0 20px 30px;
-      color: #b4b4b4;
-    }
-    
-    li {
-      margin-bottom: 10px;
-      line-height: 1.8;
-    }
-    
-    strong {
-      color: #f4f4f4;
-      font-weight: 600;
-    }
-    
-    .section {
-      margin-bottom: 50px;
-    }
-    
-    .highlight-box {
-      background: linear-gradient(135deg, #1a1a1a 0%, #262626 100%);
-      border: 1px solid #3ecf8e;
-      border-radius: 8px;
-      padding: 20px;
-      margin: 20px 0;
-    }
-    
-    .highlight-box h3 {
-      color: #3ecf8e;
-      margin-top: 0;
-    }
-    
-    .privacy-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-    }
-    
-    .privacy-table th,
-    .privacy-table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #2a2a2a;
-    }
-    
-    .privacy-table th {
-      background: #1a1a1a;
-      color: #3ecf8e;
-      font-weight: 600;
-    }
-    
-    .privacy-table tr:hover {
-      background: rgba(62, 207, 142, 0.05);
-    }
-    
-    .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      background: #3ecf8e;
-      color: #000;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-left: 8px;
-    }
-    
-    .warning {
-      background: rgba(245, 158, 11, 0.1);
-      border-left: 3px solid #f59e0b;
-      padding: 15px;
-      margin: 20px 0;
-      border-radius: 4px;
-    }
-    
-    .info {
-      background: rgba(59, 130, 246, 0.1);
-      border-left: 3px solid #3b82f6;
-      padding: 15px;
-      margin: 20px 0;
-      border-radius: 4px;
-    }
-    
-    footer {
-      margin-top: 60px;
-      padding-top: 30px;
-      border-top: 1px solid #2a2a2a;
-      text-align: center;
-      color: #666;
-      font-size: 0.9rem;
-    }
-    
-    a {
-      color: #3ecf8e;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    
-    a:hover {
-      color: #35b67a;
-      text-decoration: underline;
-    }
-    
-    .last-updated {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 4px;
-      padding: 10px 15px;
-      margin: 20px 0;
-      font-size: 0.9rem;
-      color: #888;
-    }
-  </style>
+  <title>Privacy Policy - Clipboard Manager</title>
+  <link rel="icon" href="icon-48.png">
+  <script src="js/theme-init.js"></script>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="pages.css">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🔒 Privacy Policy</h1>
-      <p style="font-size: 1.2rem; color: #888;">Clipboard Manager Extension v1.2.1</p>
-      <div class="last-updated">
-        <strong>Last Updated:</strong> December 2024 | <strong>Effective Date:</strong> December 2024
-      </div>
-    </header>
-
-    <div class="highlight-box">
-      <h3>🛡️ Your Privacy is Our Priority</h3>
-      <p>Clipboard Manager is designed with privacy-first principles. <strong>All your data stays on your device.</strong> We don't collect, track, or transmit any personal information or clipboard content to external servers.</p>
+  <div class="site-bar">
+    <div class="site-bar-inner">
+      <a class="brand" href="documentation.html"><img src="icon-48.png" alt="">Clipboard Manager</a>
+      <nav class="site-nav" aria-label="Pages">
+        <a href="documentation.html">Documentation</a>
+        <a href="privacy_policy.html" aria-current="page">Privacy policy</a>
+      </nav>
     </div>
+  </div>
 
-    <section class="section">
-      <h2>📊 Information Collection & Storage</h2>
-      
-      <h3>What We Store Locally</h3>
-      <p>The extension stores the following data <strong>exclusively on your local device</strong> using Chrome's storage API:</p>
-      
-      <table class="privacy-table">
-        <thead>
-          <tr>
-            <th>Data Type</th>
-            <th>Purpose</th>
-            <th>Storage Location</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Clipboard Text</strong></td>
-            <td>Core functionality - saving clipboard history</td>
-            <td>Local device only</td>
-          </tr>
-          <tr>
-            <td><strong>Timestamps</strong></td>
-            <td>Track when items were saved</td>
-            <td>Local device only</td>
-          </tr>
-          <tr>
-            <td><strong>Tags & Labels</strong></td>
-            <td>Organize and categorize items</td>
-            <td>Local device only</td>
-          </tr>
-          <tr>
-            <td><strong>Favorites & Pins</strong></td>
-            <td>Mark important items</td>
-            <td>Local device only</td>
-          </tr>
-          <tr>
-            <td><strong>Settings</strong></td>
-            <td>User preferences and configuration</td>
-            <td>Local device only</td>
-          </tr>
-          <tr>
-            <td><strong>Usage Statistics</strong></td>
-            <td>Local analytics for the Statistics Dashboard</td>
-            <td>Local device only</td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <div class="info">
-        <strong>💡 Important:</strong> The extension has a 5MB storage limit imposed by Chrome. Once this limit is reached, you'll need to use the optimization feature or manually delete old items.
+  <div class="page">
+    <nav class="toc" aria-label="On this page">
+      <p class="toc-title">On this page</p>
+      <a href="#changes">What changed in 2.0</a>
+      <a href="#stored">What is stored</a>
+      <a href="#capture">Automatic saving</a>
+      <a href="#not">What we don't do</a>
+      <a href="#use">How data is used</a>
+      <a href="#security">Security</a>
+      <a href="#permissions">Permissions</a>
+      <a href="#control">Your control</a>
+      <a href="#third-party">Third-party services</a>
+      <a href="#limited-use">Chrome Web Store policy</a>
+      <a href="#children">Children's privacy</a>
+      <a href="#gdpr">GDPR</a>
+      <a href="#policy-changes">Changes to this policy</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <main class="content">
+      <header class="hero">
+        <p class="eyebrow">Privacy policy</p>
+        <h1>Your clipboard stays on your device</h1>
+        <p class="lead">This policy explains what Clipboard Manager stores, when it reads text, and the control you have over it.</p>
+        <div class="meta">
+          <span class="pill accent">Version 2.0.0</span>
+          <span class="pill">Last updated November 21, 2026</span>
+          <span class="pill">Effective November 21, 2026</span>
+        </div>
+      </header>
+
+      <div class="summary">
+        <h2>The short version</h2>
+        <p>Everything Clipboard Manager saves is kept in Chrome's local storage on your computer. The extension makes no network requests. We don't collect, transmit, sell or share your clipboard content or any other personal information, and there are no analytics, ads or accounts.</p>
       </div>
-    </section>
 
-    <section class="section">
-      <h2>🚫 What We DON'T Do</h2>
-      
-      <ul>
-        <li>❌ <strong>No External Servers:</strong> We don't operate or connect to any external servers</li>
-        <li>❌ <strong>No Analytics:</strong> We don't use Google Analytics or any tracking services</li>
-        <li>❌ <strong>No Data Transmission:</strong> Your clipboard data never leaves your device</li>
-        <li>❌ <strong>No User Profiling:</strong> We don't create profiles or track user behavior</li>
-        <li>❌ <strong>No Ads:</strong> The extension is completely ad-free</li>
-        <li>❌ <strong>No Third-Party Access:</strong> No third parties have access to your data</li>
-        <li>❌ <strong>No Cloud Sync:</strong> Data is not synced to any cloud service</li>
-      </ul>
-    </section>
+      <section id="changes">
+        <h2>What changed in version 2.0</h2>
+        <p>Version 2.0 added features that affect when the extension can read text. All of them keep your data on your device.</p>
+        <ul>
+          <li><strong>Automatic saving (optional, off by default).</strong> If you turn it on, the extension saves the text you copy or cut on web pages. This requires access to the sites you visit, which Chrome asks you to approve.</li>
+          <li><strong>Right-click “Save selection”.</strong> Saves the text you have selected on the current page when you choose that menu item.</li>
+          <li><strong>Side panel.</strong> Shows the same history beside the page.</li>
+          <li><strong>No more external requests.</strong> Earlier versions loaded a font from Google Fonts and website icons from a Google service, which exposed the domains of saved links. Both were removed. The extension now uses system fonts and built-in icons only.</li>
+          <li><strong>Cleanup is now opt-in.</strong> The Optimize Storage feature, which removed items older than 90 days, is gone. Items are only removed automatically if you choose a limit or a time period in Settings.</li>
+        </ul>
+      </section>
 
-    <section class="section">
-      <h2>🔐 Data Security</h2>
-      
-      <h3>How Your Data is Protected</h3>
-      <ul>
-        <li><strong>Chrome Storage API:</strong> Uses Chrome's secure storage system with sandboxing</li>
-        <li><strong>Local-Only Access:</strong> Data is only accessible through the extension interface</li>
-        <li><strong>No Network Requests:</strong> The extension doesn't make any network calls for your data</li>
-        <li><strong>Automatic Cleanup:</strong> Old items (90+ days) are automatically removed to manage storage</li>
-        <li><strong>User Control:</strong> You have full control to delete any or all data at any time</li>
-      </ul>
-      
-      <h3>Data Compression & Optimization</h3>
-      <p>To maximize storage efficiency within Chrome's 5MB limit:</p>
-      <ul>
-        <li>Text data is compressed to save space</li>
-        <li>Duplicate entries are automatically detected and removed</li>
-        <li>Unused tags are cleaned up periodically</li>
-        <li>Manual optimization available via the Settings panel</li>
-      </ul>
-    </section>
+      <section id="stored">
+        <h2>What is stored on your device</h2>
+        <p>The extension stores the following <strong>only on your local device</strong>, using Chrome's storage API.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Data</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Saved text</strong></td><td>The clipboard history itself: text you save with the Save button, the right-click menu, a new snippet or, if enabled, automatic saving.</td></tr>
+              <tr><td><strong>Timestamps</strong></td><td>When each item was saved, used for sorting and optional automatic deletion.</td></tr>
+              <tr><td><strong>Names and tags</strong></td><td>Labels you add to organize items.</td></tr>
+              <tr><td><strong>Pins and favorites</strong></td><td>Which items you marked as important.</td></tr>
+              <tr><td><strong>Content type</strong></td><td>A label worked out on your device (link, email, phone, color, code or text).</td></tr>
+              <tr><td><strong>Settings</strong></td><td>Theme, automatic saving, item limit, automatic deletion and time format.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The extension does not record which website a piece of text came from, your browsing history, or anything about pages beyond the text you copy or select.</p>
+        <p>The Overview in Settings (item counts and a 7-day activity chart) is calculated on your device from this data each time you open it. Nothing is logged or sent.</p>
+      </section>
 
-    <section class="section">
-      <h2>🎯 How We Use Your Data</h2>
-      
-      <p>Your clipboard data is used <strong>exclusively within the extension</strong> for:</p>
-      
-      <ul>
-        <li>✅ Displaying your clipboard history in the popup interface</li>
-        <li>✅ Enabling search and filtering of saved items</li>
-        <li>✅ Managing favorites, pins, and tags</li>
-        <li>✅ Generating local statistics (item count, storage usage, etc.)</li>
-        <li>✅ Creating activity charts and usage patterns (locally calculated)</li>
-        <li>✅ Import/Export functionality (user-initiated file operations)</li>
-      </ul>
-      
-      <div class="warning">
-        <strong>⚠️ Sensitive Data Warning:</strong> The extension saves everything you explicitly save via the SAVE button. Be cautious about saving passwords, API keys, or other sensitive information. Consider using the optimization feature to regularly clean old data.
-      </div>
-    </section>
+      <section id="capture">
+        <h2>Automatic saving</h2>
+        <p>Automatic saving is <strong>off by default</strong>. When you turn on <strong>Save copies automatically</strong> in Settings, Chrome asks you to allow the extension to read and change data on the sites you visit. With that allowed:</p>
+        <ul>
+          <li>A small script runs on the pages you open and listens for copy and cut actions.</li>
+          <li>When you copy or cut, it reads only the text you selected and saves it to your local history.</li>
+          <li>Text in password fields and payment-card fields, and text that looks like a card number, is skipped.</li>
+          <li>The script does not read the rest of the page, does not change the page, and does not send anything anywhere.</li>
+          <li>Turning the setting off stops the saving and removes the site access.</li>
+        </ul>
+        <div class="note warn">
+          <p><strong>Please note:</strong> the filters above are a safeguard, not a guarantee. With automatic saving on, other sensitive text you copy, such as an API key or a one-time code shown as plain text, will be saved. Saved text is not encrypted.</p>
+        </div>
 
-    <section class="section">
-      <h2>🔑 Permissions Explained</h2>
-      
-      <p>The extension requires the following Chrome permissions:</p>
-      
-      <table class="privacy-table">
-        <thead>
-          <tr>
-            <th>Permission</th>
-            <th>Why It's Needed</th>
-            <th>What It Allows</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>clipboardRead</strong></td>
-            <td>Read current clipboard content</td>
-            <td>Access text from clipboard when you click SAVE</td>
-          </tr>
-          <tr>
-            <td><strong>clipboardWrite</strong></td>
-            <td>Copy items back to clipboard</td>
-            <td>Copy saved items when you click on them</td>
-          </tr>
-          <tr>
-            <td><strong>storage</strong></td>
-            <td>Store clipboard history</td>
-            <td>Save and retrieve data using Chrome's local storage</td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <div class="info">
-        <strong>🔒 Note:</strong> These are the minimum permissions required for the extension to function. We don't request any additional permissions for tracking or analytics.
-      </div>
-    </section>
+        <h3>Saving a selection from the right-click menu</h3>
+        <p>When you choose <strong>Save selection to Clipboard Manager</strong>, the extension reads the selected text on that page at that moment and saves it. This does not need the site access described above and does not read anything else.</p>
+      </section>
 
-    <section class="section">
-      <h2>👤 User Rights & Control</h2>
-      
-      <h3>You Have Complete Control</h3>
-      <ul>
-        <li><strong>Access:</strong> View all stored data through the extension interface</li>
-        <li><strong>Export:</strong> Export your entire clipboard history at any time</li>
-        <li><strong>Delete:</strong> Remove individual items or clear all history</li>
-        <li><strong>Optimize:</strong> Use the optimization feature to clean up old data</li>
-        <li><strong>Uninstall:</strong> Removing the extension deletes all associated data</li>
-      </ul>
-      
-      <h3>Data Retention</h3>
-      <ul>
-        <li>Data is kept until you manually delete it or uninstall the extension</li>
-        <li>Automatic cleanup removes items older than 90 days (configurable)</li>
-        <li>Favorites and pinned items are protected from automatic cleanup</li>
-        <li>No backups are kept after deletion</li>
-      </ul>
-    </section>
+      <section id="not">
+        <h2>What we don't do</h2>
+        <ul class="crosses">
+          <li><strong>No external servers.</strong> We don't operate or connect to any server.</li>
+          <li><strong>No network requests.</strong> The extension does not contact any website or service.</li>
+          <li><strong>No analytics or tracking.</strong> No usage data is gathered.</li>
+          <li><strong>No data transmission.</strong> Your clipboard content never leaves your device.</li>
+          <li><strong>No profiling.</strong> We don't build profiles or track behavior.</li>
+          <li><strong>No ads.</strong></li>
+          <li><strong>No third-party access.</strong> Nobody else receives your data.</li>
+          <li><strong>No cloud sync.</strong> Data is not synced between devices.</li>
+        </ul>
+      </section>
 
-    <section class="section">
-      <h2>🌐 Third-Party Services</h2>
-      
-      <p><strong>We don't use any third-party services.</strong> However, the extension includes:</p>
-      
-      <ul>
-        <li><strong>Open Source Libraries:</strong> Markdown parsing and syntax highlighting libraries (bundled locally)</li>
-        <li><strong>Icons:</strong> SVG icons embedded directly in the code</li>
-        <li><strong>Fonts:</strong> System fonts only - no external font services</li>
-      </ul>
-      
-      <p>All resources are bundled with the extension and loaded locally. No external requests are made.</p>
-    </section>
+      <section id="use">
+        <h2>How your data is used</h2>
+        <p>Your saved text is used only inside the extension, to:</p>
+        <ul class="checks">
+          <li>Show your history in the popup and the side panel</li>
+          <li>Search and filter your items</li>
+          <li>Manage pins, favorites, names and tags</li>
+          <li>Copy an item back to your clipboard when you click it</li>
+          <li>Show the Overview in Settings</li>
+          <li>Create export files and read import files that you choose</li>
+        </ul>
+      </section>
 
-    <section class="section">
-      <h2>👶 Children's Privacy</h2>
-      
-      <p>Clipboard Manager is a general productivity tool not specifically directed at children under 13. We don't knowingly collect any information from children. The extension stores only what users explicitly save, regardless of age.</p>
-    </section>
+      <section id="security">
+        <h2>Security</h2>
+        <ul>
+          <li><strong>Chrome's storage.</strong> Data is kept in the extension's own storage area, which other websites and extensions cannot read.</li>
+          <li><strong>Not encrypted.</strong> Saved text is stored as plain text in your Chrome profile. Anyone with access to your computer account could read it.</li>
+          <li><strong>Safe display.</strong> Saved text is always shown as plain text and is never run as code or HTML.</li>
+          <li><strong>Export files.</strong> Files you export are ordinary, unencrypted files. You decide where they are kept and who can see them.</li>
+        </ul>
+        <div class="note warn">
+          <p><strong>Sensitive information:</strong> avoid saving passwords, API keys and similar secrets. If you use automatic saving, consider turning on <strong>Delete automatically</strong> in Settings so old items do not accumulate.</p>
+        </div>
+      </section>
 
-    <section class="section">
-      <h2>📝 Changes to This Policy</h2>
-      
-      <p>We may update this Privacy Policy to reflect changes in the extension's functionality. When we do:</p>
-      
-      <ul>
-        <li>The "Last Updated" date at the top will be changed</li>
-        <li>For significant changes, we'll update the version notes</li>
-        <li>The updated policy will be available through the extension's Documentation link</li>
-      </ul>
-      
-      <p>Continued use of the extension after changes constitutes acceptance of the updated policy.</p>
-    </section>
+      <section id="permissions">
+        <h2>Permissions</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Permission</th><th>Why it is needed</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>clipboardRead</strong></td><td>Read the text on your clipboard when you click Save.</td></tr>
+              <tr><td><strong>clipboardWrite</strong></td><td>Copy a saved item back to your clipboard when you click it.</td></tr>
+              <tr><td><strong>storage</strong></td><td>Keep your history and settings in Chrome's local storage.</td></tr>
+              <tr><td><strong>contextMenus</strong></td><td>Add the “Save selection to Clipboard Manager” item to the right-click menu.</td></tr>
+              <tr><td><strong>activeTab</strong></td><td>Reach the current page only at the moment you use that menu item.</td></tr>
+              <tr><td><strong>scripting</strong></td><td>Read the selected text for that menu item, and run the automatic-saving script if you enable it.</td></tr>
+              <tr><td><strong>sidePanel</strong></td><td>Show the history in Chrome's side panel.</td></tr>
+              <tr><td><strong>Site access</strong> (optional)</td><td>Requested only when you turn on automatic saving. Lets the extension read the text you copy on web pages.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <p>Site access is never requested unless you turn on automatic saving, and it is removed when you turn it off. You can also revoke it at any time from Chrome's extension settings. No permission is used for tracking or analytics.</p>
+        </div>
+      </section>
 
-    <section class="section">
-      <h2>🇪🇺 GDPR Compliance</h2>
-      
-      <p>For users in the European Union:</p>
-      
-      <ul>
-        <li><strong>Legal Basis:</strong> Not applicable - we don't process personal data</li>
-        <li><strong>Data Controller:</strong> You are the sole controller of your data</li>
-        <li><strong>Data Processor:</strong> The extension acts as a local tool under your control</li>
-        <li><strong>Right to Erasure:</strong> Delete any or all data at any time through the extension</li>
-        <li><strong>Data Portability:</strong> Export your data using the Export feature</li>
-        <li><strong>No Cross-Border Transfers:</strong> Data never leaves your device</li>
-      </ul>
-    </section>
+      <section id="control">
+        <h2>Your control</h2>
+        <ul>
+          <li><strong>See it.</strong> Everything stored is visible in the extension.</li>
+          <li><strong>Export it.</strong> Download your full history as JSON or text at any time.</li>
+          <li><strong>Edit or delete it.</strong> Change or remove individual items, select several, or clear the history.</li>
+          <li><strong>Uninstall.</strong> Removing the extension deletes all of its stored data.</li>
+        </ul>
 
-    <section class="section">
-      <h2>📧 Contact Information</h2>
-      
-      <p>For privacy-related questions or concerns:</p>
-      
-      <ul>
-        <li><strong>Email:</strong> <a href="mailto:wissam.yahfoufi@gmail.com">wissam.yahfoufi@gmail.com</a></li>
-        <li><strong>GitHub:</strong> <a href="https://github.com/wissamyah/clipboard-manager">Report Issues</a></li>
-        <li><strong>Response Time:</strong> We aim to respond within 48-72 hours</li>
-      </ul>
-      
-      <div class="highlight-box">
-        <h3>🤝 Our Commitment</h3>
-        <p>We are committed to maintaining your privacy and trust. This extension was built with the principle that your data belongs to you and should remain under your complete control.</p>
-      </div>
-    </section>
+        <h3>Retention</h3>
+        <ul>
+          <li>Items are kept until you delete them, they exceed the item limit you chose (1,000 by default), or you uninstall the extension.</li>
+          <li>Automatic deletion is off by default. If you turn it on, items older than 7, 30 or 90 days are removed.</li>
+          <li>Pinned items and favorites are not removed by the item limit, automatic deletion or Clear history.</li>
+          <li>After you delete an item, an Undo option is available for a few seconds. Once it is gone the item cannot be recovered, and no backup is kept.</li>
+        </ul>
+      </section>
 
-    <footer>
-      <p>&copy; 2024 Clipboard Manager. All rights reserved.</p>
-      <p>This privacy policy applies to Clipboard Manager Extension version 1.2.1 and above.</p>
-    </footer>
+      <section id="third-party">
+        <h2>Third-party services</h2>
+        <p><strong>The extension uses no third-party services.</strong> Fonts are your system's own, icons are built in, and all code is bundled with the extension. No external requests are made and no remote code is loaded.</p>
+        <p>If you open a saved link, it opens in a normal Chrome tab and that website's own privacy policy applies.</p>
+      </section>
+
+      <section id="limited-use">
+        <h2>Chrome Web Store User Data Policy</h2>
+        <p>Clipboard Manager's use of information complies with the <a href="https://developer.chrome.com/docs/webstore/program-policies">Chrome Web Store User Data Policy</a>, including the Limited Use requirements. Specifically:</p>
+        <ul>
+          <li>Data is used only to provide the clipboard history features described here.</li>
+          <li>Data is not transferred to anyone.</li>
+          <li>Data is not used for advertising, for creditworthiness or lending purposes, or sold.</li>
+          <li>No human reads your data; it never leaves your device.</li>
+        </ul>
+      </section>
+
+      <section id="children">
+        <h2>Children's privacy</h2>
+        <p>Clipboard Manager is a general productivity tool not specifically directed at children under 13. We don't knowingly collect any information from children; the extension does not collect information from anyone.</p>
+      </section>
+
+      <section id="gdpr">
+        <h2>GDPR</h2>
+        <p>For users in the European Union:</p>
+        <ul>
+          <li><strong>Processing:</strong> we do not receive or process your data. It is handled only on your device, under your control.</li>
+          <li><strong>Right to erasure:</strong> delete any or all data at any time in the extension.</li>
+          <li><strong>Data portability:</strong> export your data with the Export feature.</li>
+          <li><strong>No cross-border transfers:</strong> data never leaves your device.</li>
+        </ul>
+      </section>
+
+      <section id="policy-changes">
+        <h2>Changes to this policy</h2>
+        <p>We may update this policy when the extension's features change. When we do, the “Last updated” date at the top changes, significant changes are summarized in a “What changed” section, and the current policy is always available from the extension's Settings.</p>
+        <p>Continued use of the extension after changes constitutes acceptance of the updated policy.</p>
+      </section>
+
+      <section id="contact">
+        <h2>Contact</h2>
+        <ul>
+          <li><strong>Email:</strong> <a href="mailto:wissam.yahfoufi@gmail.com">wissam.yahfoufi@gmail.com</a></li>
+          <li><strong>GitHub:</strong> <a href="https://github.com/wissamyah/clipboard-manager">Report an issue</a></li>
+          <li><strong>Response time:</strong> we aim to respond within 48–72 hours.</li>
+        </ul>
+      </section>
+
+      <footer class="site-footer">
+        <p>&copy; 2024–2026 Clipboard Manager. All rights reserved.</p>
+        <p>This privacy policy applies to Clipboard Manager version 2.0.0 and above.</p>
+      </footer>
+    </main>
   </div>
 </body>
 </html>

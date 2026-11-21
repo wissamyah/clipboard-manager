@@ -1,29 +1,45 @@
 {
   "manifest_version": 3,
   "name": "Clipboard Manager",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "description": "Effortlessly manage clipboard history — Save crucial snippets and access them anytime.",
-  "permissions": ["clipboardRead", "clipboardWrite", "storage"],
+  "minimum_chrome_version": "123",
+  "permissions": [
+    "clipboardRead",
+    "clipboardWrite",
+    "storage",
+    "contextMenus",
+    "activeTab",
+    "scripting",
+    "sidePanel"
+  ],
+  "optional_host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup.html",
+    "default_title": "Clipboard Manager",
     "default_icon": {
       "16": "icon-16.png",
       "48": "icon-48.png",
       "128": "icon-128.png"
     }
   },
+  "side_panel": {
+    "default_path": "popup.html?panel=1"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+V"
+      },
+      "description": "Open Clipboard Manager"
+    }
+  },
   "icons": {
     "16": "icon-16.png",
     "48": "icon-48.png",
     "128": "icon-128.png"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["js/*", "fonts/*"],
-      "matches": ["<all_urls>"]
-    }
-  ]
+  }
 }

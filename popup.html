@@ -4,201 +4,238 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clipboard Manager</title>
+  <script src="js/theme-init.js"></script>
+  <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  
-  <header>
-    <h1>CLIPBOARD HISTORY</h1>
-    <div class="header">
-      <div class="search-filter">
-        <div class="search-container">
-          <input type="text" id="search-input" class="search-input" placeholder="Search clipboard history...">
-        </div>
-        <div class="filter-container">
-          <select id="filter-dropdown" aria-label="Filter dropdown">
-            <option value="">All Items</option>
-            <option value="recent">Recent</option>
-            <option value="oldest">Oldest</option>
-            <option value="favorites">Favorites</option>
-            <option value="urls">URLs</option>
-            <option value="code">Code</option>
-            <optgroup label="Tags" id="tag-filters">
-              <!-- Dynamic tag options will be added here -->
-            </optgroup>
-          </select>
-        </div>
-      </div>
-      <div class="buttons">
-        <button id="save-clipboard" class="btn-primary">SAVE</button>
-        <button id="bulk-mode-toggle" class="btn-secondary" title="Bulk Selection">SELECT</button>
-        <button id="import-clipboard" class="btn-secondary">IMPORT</button>
-        <button id="export-clipboard" class="btn-secondary">EXPORT</button>
-        <button id="clear-clipboard" class="btn-secondary">CLEAR</button>
-        <button id="stats-toggle" class="btn-icon" title="Settings & Tag Management">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.03-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.63l-2-3.46a.5.5 0 0 0-.61-.22l-2.49 1a7.02 7.02 0 0 0-1.69-.98l-.38-2.65a.5.5 0 0 0-.5-.42h-4a.5.5 0 0 0-.5.42l-.38 2.65a7.02 7.02 0 0 0-1.69.98l-2.49-1a.5.5 0 0 0-.61.22l-2 3.46a.5.5 0 0 0 .12.63l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65a.5.5 0 0 0-.12.63l2 3.46c.14.24.42.34.61.22l2.49-1c.5.39 1.06.72 1.69.98l.38 2.65c.04.27.25.42.5.42h4c.25 0 .46-.15.5-.42l.38-2.65c.63-.26 1.19-.59 1.69-.98l2.49 1c.19.12.47.02.61-.22l2-3.46a.5.5 0 0 0-.12-.63l-2.11-1.65zM12 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/>
-          </svg>
+  <div class="app" id="app">
+
+    <!-- Main view -->
+    <div class="view" id="view">
+      <header class="topbar">
+        <label class="search">
+          <span class="search-icon" data-icon="search"></span>
+          <input id="search" type="text" placeholder="Search clips and tags" autocomplete="off" spellcheck="false"
+                 role="combobox" aria-expanded="true" aria-controls="list" aria-autocomplete="list"
+                 aria-label="Search clipboard history">
+          <button type="button" class="search-clear" id="search-clear" aria-label="Clear search" data-icon="x" data-icon-size="14" hidden></button>
+        </label>
+        <button type="button" class="btn btn-primary" id="save-btn" title="Save what is on your clipboard">
+          <span data-icon="plus"></span><span>Save</span>
         </button>
+        <button type="button" class="icon-btn" id="menu-btn" popovertarget="menu" aria-haspopup="menu" aria-label="More actions" data-icon="more" data-icon-size="18"></button>
+      </header>
+
+      <div class="filters">
+        <div class="chips" id="chips" role="toolbar" aria-label="Filters"></div>
+        <button type="button" class="icon-btn sm" id="sort-btn" aria-label="Sort order"></button>
       </div>
+
+      <main class="list-wrap" id="list-wrap">
+        <ul class="list" id="list" role="listbox" aria-label="Clipboard history"></ul>
+        <div class="empty" id="empty" hidden></div>
+      </main>
+
+      <div class="bulkbar" id="bulkbar" hidden>
+        <span class="bulk-count" id="bulk-count">0 selected</span>
+        <button type="button" class="btn sm" id="bulk-all">Select all</button>
+        <span class="spacer"></span>
+        <button type="button" class="icon-btn sm" id="bulk-pin" aria-label="Pin selected" title="Pin" data-icon="pin"></button>
+        <button type="button" class="icon-btn sm" id="bulk-fav" aria-label="Favorite selected" title="Favorite" data-icon="star"></button>
+        <button type="button" class="icon-btn sm danger" id="bulk-delete" aria-label="Delete selected" title="Delete" data-icon="trash"></button>
+        <button type="button" class="btn sm btn-primary" id="bulk-done">Done</button>
+      </div>
+
+      <footer class="footer">
+        <span id="count"></span>
+        <span class="hints" aria-hidden="true">
+          <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+          <span><kbd>↵</kbd> copy</span>
+          <span><kbd>⇧</kbd><kbd>↵</kbd> details</span>
+        </span>
+      </footer>
     </div>
-  </header>
-  
-  <main>
-    <!-- Clipboard View -->
-    <div id="clipboard-view" class="view active">
-      <!-- Bulk operations toolbar -->
-      <div id="bulk-toolbar" class="bulk-toolbar" style="display: none;">
-        <div class="bulk-controls">
-          <span class="bulk-count">0 selected</span>
-          <button id="bulk-select-all" class="bulk-btn">Select All</button>
-          <button id="bulk-select-none" class="bulk-btn">Select None</button>
-        </div>
-        <div class="bulk-actions">
-          <button id="bulk-pin" class="bulk-action-btn" title="Pin/Unpin">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="17" x2="12" y2="22"></line>
-              <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
-            </svg>
-          </button>
-          <button id="bulk-favorite" class="bulk-action-btn" title="Favorite/Unfavorite">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-          </button>
-          <button id="bulk-delete" class="bulk-action-btn bulk-delete" title="Delete">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
-      
-      <ul id="clipboard-list" role="list" aria-live="polite">
-        <!-- Dynamic Clipboard history items -->
-      </ul>
+
+    <!-- Overflow menu -->
+    <div class="menu" id="menu" popover role="menu" aria-label="More actions">
+      <button type="button" role="menuitem" data-menu="new"><span data-icon="plus"></span>New snippet</button>
+      <button type="button" role="menuitem" data-menu="select"><span data-icon="select"></span>Select items</button>
+      <hr>
+      <button type="button" role="menuitem" data-menu="import"><span data-icon="upload"></span>Import…</button>
+      <button type="button" role="menuitem" data-menu="export"><span data-icon="download"></span>Export</button>
+      <hr>
+      <button type="button" role="menuitem" data-menu="panel" id="menu-panel"><span data-icon="sidebar"></span>Open in side panel</button>
+      <button type="button" role="menuitem" data-menu="settings"><span data-icon="settings"></span>Settings</button>
+      <hr>
+      <button type="button" role="menuitem" data-menu="clear" class="danger"><span data-icon="trash"></span>Clear history…</button>
     </div>
-    
-    <!-- Statistics View -->
-    <div id="stats-view" class="view" style="display: none;">
-      <!-- Tag Management Section (moved to top) -->
-      <div class="tag-management">
-        <h3>Tag Management</h3>
-        <div id="tag-list" class="tag-manager-list">
-          <!-- Dynamic tag list with delete buttons -->
+
+    <!-- Detail / edit panel -->
+    <section class="panel" id="detail" aria-labelledby="d-heading" inert>
+      <header class="panel-head">
+        <button type="button" class="icon-btn" id="d-back" aria-label="Back" data-icon="back" data-icon-size="18"></button>
+        <h2 id="d-heading">Details</h2>
+        <div class="panel-actions">
+          <button type="button" class="icon-btn" id="d-pin" aria-pressed="false" aria-label="Pin" title="Pin"></button>
+          <button type="button" class="icon-btn" id="d-fav" aria-pressed="false" aria-label="Favorite" title="Favorite"></button>
+          <button type="button" class="icon-btn danger" id="d-delete" aria-label="Delete" title="Delete" data-icon="trash"></button>
+        </div>
+      </header>
+      <div class="panel-body detail-body">
+        <input id="d-name" class="field" type="text" maxlength="80" placeholder="Add a name (optional)" aria-label="Name" autocomplete="off">
+        <textarea id="d-text" class="field text-field" spellcheck="false" placeholder="Type or paste the text to keep" aria-label="Content"></textarea>
+        <div class="detail-meta" id="d-meta"></div>
+        <div class="detail-tags">
+          <div class="tag-list" id="d-tags"></div>
+          <input id="d-tag-input" class="tag-input" type="text" list="d-tag-options" maxlength="32" placeholder="Add tag…" aria-label="Add tag" autocomplete="off">
+          <datalist id="d-tag-options"></datalist>
         </div>
       </div>
-      
-      <!-- Performance & Storage Section -->
-      <div class="optimization-section">
-        <h3>Performance & Storage</h3>
-        
-        <!-- Storage Indicator Bar -->
-        <div class="storage-indicator" id="storage-indicator">
-          <div class="storage-bar">
-            <div class="storage-fill" id="storage-fill"></div>
+      <footer class="panel-foot">
+        <button type="button" class="btn" id="d-open" hidden><span data-icon="external" data-icon-size="14"></span>Open link</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn" id="d-save" disabled>Save changes</button>
+        <button type="button" class="btn btn-primary" id="d-copy"><span data-icon="copy" data-icon-size="14"></span>Copy</button>
+      </footer>
+    </section>
+
+    <!-- Settings panel -->
+    <section class="panel" id="settings" aria-labelledby="s-heading" inert>
+      <header class="panel-head">
+        <button type="button" class="icon-btn" id="s-back" aria-label="Back" data-icon="back" data-icon-size="18"></button>
+        <h2 id="s-heading">Settings</h2>
+      </header>
+      <div class="panel-body settings-body">
+
+        <section class="group">
+          <h3>Appearance</h3>
+          <div class="card">
+            <div class="set-row">
+              <div class="set-label">Theme</div>
+              <div class="segmented" role="radiogroup" aria-label="Theme">
+                <label><input type="radio" name="theme" value="system"><span>System</span></label>
+                <label><input type="radio" name="theme" value="light"><span>Light</span></label>
+                <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
+              </div>
+            </div>
           </div>
-          <span class="storage-text" id="storage-text">0% used</span>
-        </div>
-        
-        <!-- Stats Grid -->
-        <div class="optimization-content">
-          <div class="optimization-stats" id="optimization-stats">
-            <div class="stat-item">
-              <span class="stat-label">STORAGE</span>
-              <span class="stat-value" id="storage-usage">0%</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">ITEMS</span>
-              <span class="stat-value" id="item-count">0/0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">SPACE LEFT</span>
-              <span class="stat-value" id="space-left">0KB</span>
+        </section>
+
+        <section class="group">
+          <h3>Capture</h3>
+          <div class="card">
+            <label class="set-row">
+              <div>
+                <div class="set-label">Save copies automatically</div>
+                <div class="set-desc">Saves text you copy on web pages. Chrome will ask for access to the sites you visit. Password fields and card numbers are skipped, and everything stays on this device.</div>
+              </div>
+              <input type="checkbox" class="switch" id="s-capture">
+            </label>
+            <div class="set-row">
+              <div>
+                <div class="set-label">Open shortcut</div>
+                <div class="set-desc" id="s-shortcut">Not set</div>
+              </div>
+              <button type="button" class="btn sm" id="s-shortcut-btn">Change</button>
             </div>
           </div>
-          <button id="optimize-storage" class="btn-optimize">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M23 4v6h-6"></path>
-              <path d="M1 20v-6h6"></path>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-            Optimize Storage
-          </button>
-        </div>
+        </section>
+
+        <section class="group">
+          <h3>History</h3>
+          <div class="card">
+            <label class="set-row">
+              <div>
+                <div class="set-label">Keep up to</div>
+                <div class="set-desc">Oldest items are removed first. Pinned items and favorites are always kept.</div>
+              </div>
+              <select class="select" id="s-max">
+                <option value="100">100 items</option>
+                <option value="500">500 items</option>
+                <option value="1000">1,000 items</option>
+                <option value="5000">5,000 items</option>
+              </select>
+            </label>
+            <label class="set-row">
+              <div class="set-label">Delete automatically</div>
+              <select class="select" id="s-autodelete">
+                <option value="0">Never</option>
+                <option value="7">After 7 days</option>
+                <option value="30">After 30 days</option>
+                <option value="90">After 90 days</option>
+              </select>
+            </label>
+            <label class="set-row">
+              <div class="set-label">Relative times <span class="set-hint">“5m” instead of “10:42”</span></div>
+              <input type="checkbox" class="switch" id="s-relative">
+            </label>
+          </div>
+        </section>
+
+        <section class="group">
+          <h3>Overview</h3>
+          <div class="card overview">
+            <div class="stats" id="s-stats"></div>
+            <div class="spark" id="s-activity" role="img" aria-label="Items saved over the last 7 days"></div>
+            <div class="storage">
+              <div class="storage-bar"><div class="storage-fill" id="s-storage-fill"></div></div>
+              <div class="set-desc" id="s-storage-text"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="group">
+          <h3>Data</h3>
+          <div class="card">
+            <div class="set-row">
+              <div>
+                <div class="set-label">Backup</div>
+                <div class="set-desc">JSON keeps everything and can be imported again. Text is for reading.</div>
+              </div>
+            </div>
+            <div class="set-row buttons">
+              <button type="button" class="btn sm" id="s-import"><span data-icon="upload" data-icon-size="14"></span>Import</button>
+              <button type="button" class="btn sm" id="s-export-json"><span data-icon="download" data-icon-size="14"></span>Export JSON</button>
+              <button type="button" class="btn sm" id="s-export-txt"><span data-icon="download" data-icon-size="14"></span>Export text</button>
+            </div>
+            <div class="set-row">
+              <div>
+                <div class="set-label">Clear history</div>
+                <div class="set-desc">Pinned items and favorites are kept.</div>
+              </div>
+              <button type="button" class="btn sm btn-danger" id="s-clear">Clear…</button>
+            </div>
+          </div>
+        </section>
+
+        <p class="about">
+          Clipboard Manager <span id="s-version"></span> ·
+          <a href="documentation.html" target="_blank">Documentation</a> ·
+          <a href="privacy_policy.html" target="_blank">Privacy policy</a>
+        </p>
       </div>
-      
-      <!-- Overview Cards -->
-      <div class="stats-overview">
-        <div class="stat-card">
-          <div class="stat-value" id="total-items">0</div>
-          <div class="stat-label">Total Items</div>
+    </section>
+
+    <!-- Confirmation dialog -->
+    <dialog class="dialog" id="confirm" aria-labelledby="confirm-title">
+      <form method="dialog">
+        <h2 id="confirm-title"></h2>
+        <p id="confirm-body"></p>
+        <div class="dialog-actions">
+          <button class="btn" value="cancel" id="confirm-cancel">Cancel</button>
+          <button class="btn btn-primary" value="ok" id="confirm-ok">Confirm</button>
         </div>
-        <div class="stat-card">
-          <div class="stat-value" id="storage-used">0%</div>
-          <div class="stat-label">Storage</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="total-tags">0</div>
-          <div class="stat-label">Tags</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="favorite-count">0</div>
-          <div class="stat-label">Favorites</div>
-        </div>
-      </div>
-      
-      <!-- Charts Section -->
-      <div class="stats-charts">
-        <!-- Activity Chart -->
-        <div class="chart-container activity-chart">
-          <h3>7-Day Activity</h3>
-          <canvas id="activity-chart" width="450" height="150"></canvas>
-        </div>
-        
-        <!-- Content Type Distribution -->
-        <div class="chart-container type-chart">
-          <h3>Content Types</h3>
-          <div id="type-chart" class="pie-chart"></div>
-        </div>
-      </div>
-    </div>
-  </main>
-  
-  <!-- Modal for confirmation of clearing clipboard history -->
-  <div id="clearConfirmationModal" class="modal" role="dialog" aria-labelledby="clearConfirmationModalLabel" aria-describedby="clearConfirmationModalDesc">
-    <div class="modal-content">
-      <p id="clearConfirmationModalDesc">Are you sure you want to clear all clipboard history?</p>
-      <div class="modal-buttons">
-        <button id="confirmClear" class="btn-danger" aria-label="Confirm Clear">Clear All</button>
-        <button id="cancelClear" class="btn-cancel" aria-label="Cancel Clear">Cancel</button>
-      </div>
-    </div>
+      </form>
+    </dialog>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+    <input type="file" id="import-file" accept=".json,.txt,application/json,text/plain" hidden>
   </div>
-  
-  <!-- Modal for confirmation of deleting favorite item -->
-  <div id="confirmationModal" class="modal" role="dialog" aria-labelledby="confirmationModalLabel" aria-describedby="confirmationModalDesc">
-    <div class="modal-content">
-      <p id="confirmationModalDesc">This item is in your <strong>Favorites</strong>.<br> Do you want to <strong>proceed with the Deletion?</strong></p>
-      <div class="modal-buttons">
-        <button id="confirmDelete" class="btn-danger" aria-label="Confirm Delete">Delete</button>
-        <button id="cancelDelete" class="btn-cancel" aria-label="Cancel Delete">Cancel</button>
-      </div>
-    </div>
-  </div>
-  
-  <footer>
-    <a href="documentation.html" target="_blank">Documentation</a>
-    <span class="separator">|</span>
-    <a href="privacy_policy.html" target="_blank">Privacy Policy</a>
-  </footer>
-  
-  <!-- Module Scripts -->
+
+  <script src="js/core.js"></script>
   <script src="js/icons.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/ui.js"></script>
+  <script src="js/panels.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

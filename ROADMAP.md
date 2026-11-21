@@ -136,9 +136,9 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 
 ### Completed Features (cont.):
 3. **Rich Text Preview** ✅:
-   - [x] Markdown rendering with marked library
-   - [x] Syntax highlighting for code snippets
-   - [x] Preview pane with eye icon toggle
+   - [ ] Markdown rendering (never shipped; the v1 preview used unsafe regex replacement and was removed in 2.0.0)
+   - [ ] Syntax highlighting for code snippets
+   - [x] Detail panel with full text (replaces the eye-icon preview in 2.0.0)
    - [x] Statistics display (word count, character count)
    - [x] Content type detection and display
 
@@ -159,12 +159,12 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 
 ### Completed Tasks:
 - [x] Storage usage indicators in settings
-- [x] Memory optimization with cleanup functions
-- [x] Data compression for text storage
-- [x] Performance optimization button
+- [x] Single read/write per action through `CM.Store` (2.0.0)
+- [x] Keyed list rendering with `content-visibility` instead of full re-renders (2.0.0)
+- [x] Configurable item limit and optional auto-delete (2.0.0; replaces the "Optimize" button, which deleted data without asking)
 
 ### Pending Tasks:
-- [ ] Virtual scrolling (needs better implementation)
+- [ ] Virtual scrolling (only if `content-visibility` proves insufficient)
 - [ ] Pagination as fallback
 - [ ] Lazy loading for images/previews
 
@@ -174,7 +174,8 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 **Goal:** Protect sensitive user data
 
 ### Planned Tasks:
-- [ ] Pattern detection for sensitive data
+- [x] Automatic capture skips password fields and card numbers (2.0.0)
+- [ ] Broader pattern detection for sensitive data
 - [ ] Optional encryption
 - [ ] Private mode
 - [ ] Auto-clear rules
@@ -189,7 +190,8 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 ### Planned Tasks:
 - [ ] Chrome sync API integration
 - [ ] Cross-device clipboard sync
-- [ ] Context menu integration
+- [x] Context menu integration: "Save selection" (2.0.0)
+- [x] Side panel (2.0.0)
 - [ ] API for third-party apps
 - [ ] Webhook support
 
@@ -199,11 +201,11 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 **Goal:** Full personalization options
 
 ### Planned Tasks:
-- [ ] Light theme option
+- [x] Light theme, with System / Light / Dark setting (2.0.0)
 - [ ] Custom color schemes
 - [ ] Font size adjustments
 - [ ] Layout density options
-- [ ] Custom hotkeys
+- [x] Open shortcut, changeable at chrome://extensions/shortcuts (2.0.0)
 
 ---
 
@@ -237,10 +239,9 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 ---
 
 ## 🎯 Current Status
-**Phase 7 IN PROGRESS:** Storage & Performance Optimization partially complete
-**Just Completed:** Storage indicators, Memory optimization, Performance tools
-**Next Up:** Phase 8 - Security & Privacy
-**Current Version:** 1.2.1
+**Just Completed:** Version 2.0.0 - full UI rework (see log below)
+**Next Up:** Phase 8 - Security & Privacy (encryption, per-site capture rules)
+**Current Version:** 2.0.0
 
 ---
 
@@ -275,14 +276,26 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 - ✅ Fixed virtual scrolling issues
 - ✅ Removed unnecessary toast notifications
 
-### Next Version 1.3.0 (Planned)
-- Advanced markdown rendering
-- Syntax highlighting
-- Image previews
-- Usage analytics
+### Version 2.0.0 (Current)
+- New command-palette style interface: compact rows, filter chips, click-to-copy with inline confirmation
+- Design system with light (cream, slate and lime) and dark (near-black and neon lime) themes, system-aware
+- Motion: animated list reordering, slide-over panels, reduced-motion support
+- Optional automatic capture of copies on web pages
+- Open shortcut (Alt+Shift+V), "Save selection" context menu, side panel
+- Item editing, named snippets, new content types (color, stricter code detection)
+- Undo for deletes; settings for limits, auto-delete and time format
+- JSON export/import that round-trips; text export
+- Stable item ids and a schema migration from 1.x
+- Documentation and privacy policy redesigned on the same tokens (`tokens.css`, `pages.css`); policy rewritten for automatic saving and the new permissions
+- Fixes: saves failing past the item limit, unescaped HTML in previews, network requests to Google (fonts, favicons), keyboard handler acting on text fields
+- Removed: statistics dashboard page (now a small Settings section), Optimize Storage button, unused fonts and icons
+
+### Ideas for 2.1
+- Syntax highlighting in the detail panel
+- Image clipboard support
+- Per-site rules for automatic capture
 
 ---
 
-*Last Updated: 2025-09-10*
-*Current Version: 1.1.0*
-*Target Version: 2.0.0*
+*Last Updated: 2026-11-21*
+*Current Version: 2.0.0*
