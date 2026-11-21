@@ -20,6 +20,7 @@ Chrome extension (Manifest V3) that manages clipboard history with features for 
 - `tokens.css`: Design tokens (colours, radii, motion, fonts). Loaded by every page before its own stylesheet.
 - `styles.css`: Popup and side panel styling.
 - `documentation.html` / `privacy_policy.html` + `pages.css`: User docs and privacy policy, on the same tokens and theme. The privacy policy is also published publicly, so it must keep working as a standalone page with relative links only.
+- `index.html`: Redirect to `documentation.html` for the GitHub Pages site (served from `main` at the repo root, which hosts the public privacy policy). Not part of the store package.
 
 ### Data flow
 - Every write goes through `CM.Store` (`mutate`, `addText`, `setSettings`): one read and one write per action, serialized through a queue.
