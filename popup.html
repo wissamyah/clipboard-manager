@@ -25,6 +25,8 @@
         <button type="button" class="btn btn-primary" id="save-btn" title="Save what is on your clipboard">
           <span data-icon="plus" data-icon-size="15"></span><span>Save</span>
         </button>
+        <button type="button" class="icon-btn" id="panel-btn" aria-label="Open in side panel" title="Open in side panel" data-icon="sidebar" data-icon-size="18"></button>
+        <button type="button" class="icon-btn" id="float-btn" aria-label="Open in floating window" title="Open in floating window" data-icon="float" data-icon-size="18"></button>
         <button type="button" class="icon-btn" id="menu-btn" popovertarget="menu" aria-haspopup="menu" aria-label="More actions" data-icon="more" data-icon-size="18"></button>
       </header>
 
@@ -66,7 +68,6 @@
       <button type="button" role="menuitem" data-menu="import"><span data-icon="upload"></span>Import…</button>
       <button type="button" role="menuitem" data-menu="export"><span data-icon="download"></span>Export</button>
       <hr>
-      <button type="button" role="menuitem" data-menu="panel" id="menu-panel"><span data-icon="sidebar"></span>Open in side panel</button>
       <button type="button" role="menuitem" data-menu="settings"><span data-icon="settings"></span>Settings</button>
       <hr>
       <button type="button" role="menuitem" data-menu="clear" class="danger"><span data-icon="trash"></span>Clear history…</button>
@@ -129,7 +130,7 @@
             <label class="set-row">
               <div>
                 <div class="set-label">Save copies automatically</div>
-                <div class="set-desc">Saves text you copy on web pages. Chrome will ask for access to the sites you visit. Password fields and card numbers are skipped, and everything stays on this device.</div>
+                <div class="set-desc">Saves any text you copy while Chrome is running, in Chrome or in any other app. That includes passwords you copy; only card numbers are skipped. Everything stays on this device.</div>
               </div>
               <input type="checkbox" class="switch" id="s-capture">
             </label>

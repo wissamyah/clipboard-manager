@@ -4,63 +4,52 @@
  */
 importScripts('js/core.js');
 
-const CAPTURE_SCRIPT_ID = 'cm-capture';
 const MENU_ID = 'cm-save-selection';
-const PAGE_MATCHES = ['http://*/*', 'https://*/*'];
-
-async function hasSiteAccess() {
-  try {
-    return await chrome.permissions.contains(CM.ALL_URLS);
-  } catch {
-    return false;
-  }
-}
+const WATCHER_PATH = 'offscreen.html';
+const WATCHER_URL = chrome.runtime.getURL(WATCHER_PATH);
+const WATCHDOG_ALARM = 'cm-capture-watchdog';
 
 /* ---------- Automatic capture ---------- */
 
-async function injectIntoOpenTabs() {
-  const tabs = await chrome.tabs.query({ url: PAGE_MATCHES });
-  await Promise.allSettled(
-    tabs.map((tab) =>
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id, allFrames: true },
-        files: ['js/capture.js']
-      })
-    )
-  );
+// Capture is a clipboard watcher living in an offscreen document
+// (js/offscreen.js). The only job here is to keep that document open exactly
+// while the setting is on, and to store what it reports.
+
+async function watcherIsOpen() {
+  const contexts = await chrome.runtime.getContexts({
+    contextTypes: ['OFFSCREEN_DOCUMENT'],
+    documentUrls: [WATCHER_URL]
+  });
+  return contexts.length > 0;
 }
 
 let syncChain = Promise.resolve();
 
 /**
- * Make the registered content script match the setting + permission.
- * @param {{reinject?: boolean}} [options] reinject: also (re)inject into tabs
- *   that are already open, for when their copy of the script has gone stale.
+ * Make the watcher match the setting. Idempotent, and called from every
+ * signal that could have left the two out of step.
  */
-function syncCapture({ reinject = false } = {}) {
+function syncCapture() {
   const run = async () => {
     const { settings } = await CM.Store.read();
-    const wanted = settings.autoCapture && (await hasSiteAccess());
-    const registered = await chrome.scripting
-      .getRegisteredContentScripts({ ids: [CAPTURE_SCRIPT_ID] })
-      .catch(() => []);
+    const open = await watcherIsOpen();
 
-    if (wanted && registered.length === 0) {
-      await chrome.scripting.registerContentScripts([
-        {
-          id: CAPTURE_SCRIPT_ID,
-          js: ['js/capture.js'],
-          matches: PAGE_MATCHES,
-          allFrames: true,
-          runAt: 'document_start',
-          persistAcrossSessions: true
-        }
-      ]);
-      await injectIntoOpenTabs();
-    } else if (wanted && reinject) {
-      await injectIntoOpenTabs();
-    } else if (!wanted && registered.length > 0) {
-      await chrome.scripting.unregisterContentScripts({ ids: [CAPTURE_SCRIPT_ID] });
+    if (settings.autoCapture) {
+      if (!open) {
+        await chrome.offscreen.createDocument({
+          url: WATCHER_PATH,
+          reasons: ['CLIPBOARD'],
+          justification: 'Read the clipboard to save what the user copies to their clipboard history.'
+        });
+      }
+      // Nothing wakes the service worker if the watcher is ever lost, so a
+      // slow alarm checks that it is still there.
+      if (!(await chrome.alarms.get(WATCHDOG_ALARM))) {
+        await chrome.alarms.create(WATCHDOG_ALARM, { periodInMinutes: 1 });
+      }
+    } else {
+      if (open) await chrome.offscreen.closeDocument();
+      await chrome.alarms.clear(WATCHDOG_ALARM);
     }
   };
   syncChain = syncChain.then(run, run).catch((error) => console.error('Capture sync failed:', error));
@@ -73,26 +62,36 @@ async function handleCapture(text) {
   await CM.Store.addText(text);
 }
 
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (sender.id !== chrome.runtime.id) return;
-  if (message?.type === 'cm:capture' && typeof message.text === 'string') {
-    handleCapture(message.text).catch((error) => console.error('Capture failed:', error));
+
+  if (message?.type === 'cm:clipboard' && sender.url === WATCHER_URL && typeof message.text === 'string') {
+    // The watcher offers the text again unless it hears back.
+    handleCapture(message.text)
+      .catch((error) => console.error('Capture failed:', error))
+      .finally(() => sendResponse(true));
+    return true;
   }
-});
 
-// The permission prompt can close the popup before it hears the answer, so
-// the setting follows the permission from here.
-chrome.permissions.onAdded.addListener(async () => {
-  if (await hasSiteAccess()) await CM.Store.setSettings({ autoCapture: true });
-});
-
-chrome.permissions.onRemoved.addListener(async () => {
-  if (!(await hasSiteAccess())) await CM.Store.setSettings({ autoCapture: false });
+  if (message?.type === 'cm:sync-capture') syncCapture();
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes[CM.KEYS.SETTINGS]) syncCapture();
 });
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === WATCHDOG_ALARM) syncCapture();
+});
+
+/**
+ * Up to 2.1.0 capture was a content script on every site. Drop what it left
+ * behind: the registration and the site access it needed.
+ */
+async function retireContentScriptCapture() {
+  await chrome.scripting.unregisterContentScripts({ ids: ['cm-capture'] }).catch(() => {});
+  await chrome.permissions.remove({ origins: ['<all_urls>'] }).catch(() => {});
+}
 
 /* ---------- Context menu ---------- */
 
@@ -125,7 +124,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
 /* ---------- Lifecycle ---------- */
 
-chrome.runtime.onInstalled.addListener(async () => {
+chrome.runtime.onInstalled.addListener(async ({ reason }) => {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: MENU_ID,
@@ -134,8 +133,8 @@ chrome.runtime.onInstalled.addListener(async () => {
     });
   });
   await CM.Store.read(); // runs the data migration on update
-  // An update or reload orphans the capture script in every open tab.
-  await syncCapture({ reinject: true });
+  if (reason === 'update') await retireContentScriptCapture();
+  await syncCapture();
 });
 
 chrome.runtime.onStartup.addListener(() => {

@@ -23,7 +23,7 @@
   <div class="page">
     <nav class="toc" aria-label="On this page">
       <p class="toc-title">On this page</p>
-      <a href="#changes">What changed in 2.0</a>
+      <a href="#changes">What changed</a>
       <a href="#stored">What is stored</a>
       <a href="#capture">Automatic saving</a>
       <a href="#not">What we don't do</a>
@@ -45,9 +45,9 @@
         <h1>Your clipboard stays on your device</h1>
         <p class="lead">This policy explains what Clipboard Manager stores, when it reads text, and the control you have over it.</p>
         <div class="meta">
-          <span class="pill accent">Version 2.1.0</span>
-          <span class="pill">Last updated November 21, 2026</span>
-          <span class="pill">Effective November 21, 2026</span>
+          <span class="pill accent">Version 2.2.0</span>
+          <span class="pill">Last updated November 22, 2026</span>
+          <span class="pill">Effective November 22, 2026</span>
         </div>
       </header>
 
@@ -57,10 +57,20 @@
       </div>
 
       <section id="changes">
-        <h2>What changed in version 2.0</h2>
+        <h2>What changed in version 2.2</h2>
+        <p>Version 2.2 changes how automatic saving works, and with it what the extension can read.</p>
+        <ul>
+          <li><strong>Automatic saving now covers everything you copy.</strong> It used to save only text copied on web pages. It now reads the clipboard itself, so it also saves text you copy in other apps, in the address bar and in PDFs, for as long as Chrome is running. It is still optional and off by default.</li>
+          <li><strong>Password fields are no longer recognized.</strong> The clipboard does not say where a copy came from, so a password you copy while automatic saving is on is saved like any other text. Text that looks like a payment-card number is still skipped.</li>
+          <li><strong>Site access is gone.</strong> Automatic saving no longer runs a script on the pages you visit, so the extension no longer asks for access to the sites you visit. If you had granted it, the update removes it.</li>
+          <li><strong>Floating window.</strong> The history can be opened in its own small window. It shows the same local data.</li>
+        </ul>
+        <p>If you had automatic saving turned on before this update, it stays on and now works as described above. You can turn it off in Settings at any time.</p>
+
+        <h3>What changed in version 2.0</h3>
         <p>Version 2.0 added features that affect when the extension can read text. All of them keep your data on your device.</p>
         <ul>
-          <li><strong>Automatic saving (optional, off by default).</strong> If you turn it on, the extension saves the text you copy or cut on web pages. This requires access to the sites you visit, which Chrome asks you to approve.</li>
+          <li><strong>Automatic saving (optional, off by default).</strong> Introduced in 2.0 for text copied on web pages; see above for how it works now.</li>
           <li><strong>Right-click “Save selection”.</strong> Saves the text you have selected on the current page when you choose that menu item.</li>
           <li><strong>Side panel.</strong> Shows the same history beside the page.</li>
           <li><strong>No more external requests.</strong> Earlier versions loaded a font from Google Fonts and website icons from a Google service, which exposed the domains of saved links. Both were removed. The extension now uses system fonts and built-in icons only.</li>
@@ -92,20 +102,21 @@
 
       <section id="capture">
         <h2>Automatic saving</h2>
-        <p>Automatic saving is <strong>off by default</strong>. When you turn on <strong>Save copies automatically</strong> in Settings, Chrome asks you to allow the extension to read and change data on the sites you visit. With that allowed:</p>
+        <p>Automatic saving is <strong>off by default</strong>. When you turn on <strong>Save copies automatically</strong> in Settings:</p>
         <ul>
-          <li>A small script runs on the pages you open and listens for copy and cut actions.</li>
-          <li>When you copy or cut, it reads only the text you selected and saves it to your local history.</li>
-          <li>Text in password fields and payment-card fields, and text that looks like a card number, is skipped.</li>
-          <li>The script does not read the rest of the page, does not change the page, and does not send anything anywhere.</li>
-          <li>Turning the setting off stops the saving and removes the site access.</li>
+          <li>While Chrome is running, the extension checks the clipboard about once a second from a hidden page of its own.</li>
+          <li>When the text on the clipboard changes, the new text is saved to your local history. This covers anything you copy or cut on your computer, in Chrome (including Incognito windows) or in any other app, even while Chrome is in the background.</li>
+          <li>Text that looks like a payment-card number is skipped. Nothing else is filtered: the clipboard does not reveal which app or field a copy came from, so passwords and other secrets you copy are saved.</li>
+          <li>Only text is read. Images and files are ignored. Whatever was on the clipboard before you turned the setting on, or before Chrome started, is not saved.</li>
+          <li>The extension does not read or change the pages you visit, and it does not send anything anywhere.</li>
+          <li>Turning the setting off closes the hidden page and stops the clipboard checks immediately. Nothing is read when Chrome is not running.</li>
         </ul>
         <div class="note warn">
-          <p><strong>Please note:</strong> the filters above are a safeguard, not a guarantee. With automatic saving on, other sensitive text you copy, such as an API key or a one-time code shown as plain text, will be saved. Saved text is not encrypted.</p>
+          <p><strong>Please note:</strong> with automatic saving on, sensitive text you copy, such as a password from a password manager, an API key or a one-time code, will be saved. Saved text is not encrypted. Delete such items from your history, or leave automatic saving off if you copy secrets often.</p>
         </div>
 
         <h3>Saving a selection from the right-click menu</h3>
-        <p>When you choose <strong>Save selection to Clipboard Manager</strong>, the extension reads the selected text on that page at that moment and saves it. This does not need the site access described above and does not read anything else.</p>
+        <p>When you choose <strong>Save selection to Clipboard Manager</strong>, the extension reads the selected text on that page at that moment and saves it. It does not read anything else on the page, and it works whether or not automatic saving is on.</p>
       </section>
 
       <section id="not">
@@ -156,19 +167,20 @@
               <tr><th>Permission</th><th>Why it is needed</th></tr>
             </thead>
             <tbody>
-              <tr><td><strong>clipboardRead</strong></td><td>Read the text on your clipboard when you click Save.</td></tr>
+              <tr><td><strong>clipboardRead</strong></td><td>Read the text on your clipboard when you click Save and, if you turn on automatic saving, whenever the clipboard changes.</td></tr>
               <tr><td><strong>clipboardWrite</strong></td><td>Copy a saved item back to your clipboard when you click it.</td></tr>
               <tr><td><strong>storage</strong></td><td>Keep your history and settings in Chrome's local storage.</td></tr>
               <tr><td><strong>contextMenus</strong></td><td>Add the “Save selection to Clipboard Manager” item to the right-click menu.</td></tr>
               <tr><td><strong>activeTab</strong></td><td>Reach the current page only at the moment you use that menu item.</td></tr>
-              <tr><td><strong>scripting</strong></td><td>Read the selected text for that menu item, and run the automatic-saving script if you enable it.</td></tr>
+              <tr><td><strong>scripting</strong></td><td>Read the selected text for that menu item.</td></tr>
               <tr><td><strong>sidePanel</strong></td><td>Show the history in Chrome's side panel.</td></tr>
-              <tr><td><strong>Site access</strong> (optional)</td><td>Requested only when you turn on automatic saving. Lets the extension read the text you copy on web pages.</td></tr>
+              <tr><td><strong>offscreen</strong></td><td>Open the hidden page that checks the clipboard, only while automatic saving is on. Chrome does not let an extension read the clipboard in the background any other way.</td></tr>
+              <tr><td><strong>alarms</strong></td><td>Check once a minute that this hidden page is still open while automatic saving is on.</td></tr>
             </tbody>
           </table>
         </div>
         <div class="note">
-          <p>Site access is never requested unless you turn on automatic saving, and it is removed when you turn it off. You can also revoke it at any time from Chrome's extension settings. No permission is used for tracking or analytics.</p>
+          <p>The extension does not ask for access to the websites you visit. No permission is used for tracking or analytics.</p>
         </div>
       </section>
 

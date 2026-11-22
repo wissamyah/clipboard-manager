@@ -9,11 +9,11 @@ Chrome extension (Manifest V3) that manages clipboard history with features for 
 ## Architecture
 
 ### Files
-- `manifest.json`: MV3 config. Permissions: clipboardRead, clipboardWrite, storage, contextMenus, activeTab, scripting, sidePanel. `<all_urls>` is an *optional* host permission, requested only for automatic capture. Defines the `_execute_action` shortcut (Alt+Shift+V) and the side panel (`popup.html?panel=1`).
+- `manifest.json`: MV3 config. Permissions: clipboardRead, clipboardWrite, storage, contextMenus, activeTab, scripting, sidePanel, offscreen, alarms. No host permissions. Defines the `_execute_action` shortcut (Alt+Shift+V) and the side panel (`popup.html?panel=1`).
 - `js/core.js`: Shared, DOM-free core loaded by both the popup and the service worker (`importScripts`). Exposes the global `CM`: `CM.Store` (all storage access), `CM.detectType`, `CM.normalizeItem`, `CM.enforceLimits`, schema migration.
-- `background.js`: Service worker. Runs the data migration on install/update, owns the "Save selection" context menu, and registers/unregisters the capture content script to match the `autoCapture` setting and the host permission.
-- `js/capture.js`: Content script for automatic capture (copy/cut events). Only registered dynamically, never listed in the manifest.
-- `popup.html` / `popup.js`: The main list UI (search, filter chips, keyed row rendering, keyboard handling, bulk mode, toasts). Used for both the popup and the side panel.
+- `background.js`: Service worker. Runs the data migration on install/update, owns the "Save selection" context menu, keeps the capture watcher open exactly while `autoCapture` is on (`syncCapture`), and stores what it reports.
+- `offscreen.html` / `js/offscreen.js`: The capture watcher, an offscreen document (reason `CLIPBOARD`). Polls the system clipboard once a second and sends new text to the service worker. Exists only while `autoCapture` is on.
+- `popup.html` / `popup.js`: The main list UI (search, filter chips, keyed row rendering, keyboard handling, bulk mode, toasts). One page for three surfaces: the popup, the side panel (`?panel=1`) and the floating window (`?window=1`, a `chrome.windows` popup-type window, single instance). `js/theme-init.js` tags `<html>` with `in-sidepanel` / `in-window`.
 - `js/panels.js`: Slide-over panels (item detail/edit, settings), the confirm dialog, theming (`CM.applyTheme`) and import/export (`CM.Data`).
 - `js/icons.js`: Static inline SVG icons (`CM.icon`).
 - `js/theme-init.js`: Runs in `<head>` to apply the saved theme before first paint.
@@ -26,6 +26,13 @@ Chrome extension (Manifest V3) that manages clipboard history with features for 
 - Every write goes through `CM.Store` (`mutate`, `addText`, `setSettings`): one read and one write per action, serialized through a queue.
 - The UI never updates itself after an action. It redraws from `chrome.storage.onChanged`, which keeps the popup, the side panel and background captures in sync.
 - `popup.js` exposes `CM.app` (`state`, `actions`, `toast`, `allTags`) for `js/panels.js`.
+
+### Automatic capture
+- The clipboard has no change event and a service worker cannot read it, so capture is a poll in the offscreen document: `execCommand('paste')` into a textarea (`navigator.clipboard.readText()` needs focus, which an offscreen document never has). This is the only mechanism that sees copies made outside web pages; do not reintroduce content-script capture.
+- An offscreen document can only use `chrome.runtime`, so the watcher messages the service worker (`cm:clipboard`), which applies `CM.looksSensitive` and writes through `CM.Store`. The watcher re-offers a text until the worker acknowledges it.
+- The first read after the watcher starts is a baseline and is never saved. `copyText` in `popup.js` sends `cm:clipboard-written` so copying a saved item is not captured as a new copy.
+- `syncCapture()` is idempotent and runs on install/update, browser startup, any settings change, a one-minute watchdog alarm, and when the UI opens (`cm:sync-capture`).
+- Capture cannot tell where a copy came from, so it cannot skip password fields. The settings text, `privacy_policy.html` and `documentation.html` say so; keep them saying so.
 
 ## Development Commands
 

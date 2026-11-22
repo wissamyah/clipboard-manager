@@ -384,26 +384,10 @@
   }
 
   async function toggleCapture() {
-    if (!s.capture.checked) {
-      await CM.app.actions.setSettings({ autoCapture: false });
-      chrome.permissions.remove(CM.ALL_URLS).catch(() => {});
-      CM.app.toast('Automatic saving is off');
-      return;
-    }
-    let granted = false;
-    try {
-      // Must be the first await so the click still counts as a user gesture.
-      granted = await chrome.permissions.request(CM.ALL_URLS);
-    } catch (error) {
-      console.error('Permission request failed:', error);
-    }
-    if (!granted) {
-      s.capture.checked = false;
-      CM.app.toast('Site access is needed to save copies automatically');
-      return;
-    }
-    await CM.app.actions.setSettings({ autoCapture: true });
-    CM.app.toast('Automatic saving is on');
+    // The service worker starts or stops the clipboard watcher when the setting changes.
+    const autoCapture = s.capture.checked;
+    await CM.app.actions.setSettings({ autoCapture });
+    CM.app.toast(autoCapture ? 'Automatic saving is on' : 'Automatic saving is off');
   }
 
   CM.Settings = {

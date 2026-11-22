@@ -174,7 +174,7 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 **Goal:** Protect sensitive user data
 
 ### Planned Tasks:
-- [x] Automatic capture skips password fields and card numbers (2.0.0)
+- [x] Automatic capture skips card numbers (2.0.0). Password fields were skipped until 2.2.0; clipboard-based capture cannot see where a copy came from
 - [ ] Broader pattern detection for sensitive data
 - [ ] Optional encryption
 - [ ] Private mode
@@ -239,9 +239,9 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 ---
 
 ## 🎯 Current Status
-**Just Completed:** Version 2.1.0 - visual refresh of the popup (see log below)
-**Next Up:** Phase 8 - Security & Privacy (encryption, per-site capture rules)
-**Current Version:** 2.1.0
+**Just Completed:** Version 2.2.0 - system-wide automatic capture and the floating window (see log below)
+**Next Up:** Phase 8 - Security & Privacy (encryption, pausing capture)
+**Current Version:** 2.2.0
 
 ---
 
@@ -290,19 +290,25 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 - Fixes: saves failing past the item limit, unescaped HTML in previews, network requests to Google (fonts, favicons), keyboard handler acting on text fields
 - Removed: statistics dashboard page (now a small Settings section), Optimize Storage button, unused fonts and icons
 
-### Version 2.1.0 (Current)
+### Version 2.1.0
 - Visual refresh: rounded search bar, pill buttons with a lime gradient, filter chips with icons, taller footer with boxed key hints
 - New empty state with an illustration, "Save clipboard" and "Open Settings"
 - One shared input style across the search bar, the snippet form and Settings
 - Ctrl/Cmd+K focuses search
 - No change to permissions, capture behaviour or stored data
 
+### Version 2.2.0 (Current)
+- Automatic capture rebuilt: a clipboard watcher in an offscreen document replaces the per-page content script, so copies made in other apps, the address bar, PDFs and "Copy" buttons are saved too
+- Removed the optional `<all_urls>` site access; added the `offscreen` and `alarms` permissions (neither shows a warning)
+- Floating window, and side panel / floating window buttons in the header instead of the ⋯ menu
+- Privacy policy and documentation updated for the wider capture (passwords are no longer skipped)
+
 ### Ideas for later
 - Syntax highlighting in the detail panel
 - Image clipboard support
-- Per-site rules for automatic capture
+- Pause automatic capture for a while (for example when copying passwords)
 
 ---
 
 *Last Updated: 2026-11-22*
-*Current Version: 2.1.0*
+*Current Version: 2.2.0*

@@ -447,6 +447,9 @@
   async function copyText(text) {
     try {
       await navigator.clipboard.writeText(text);
+      // Tell the capture watcher this change is ours, so re-copying a saved
+      // item is not captured as a new copy. Nobody listens when capture is off.
+      chrome.runtime.sendMessage({ type: 'cm:clipboard-written' }).catch(() => {});
       return true;
     } catch (error) {
       console.error('Copy failed:', error);
@@ -557,14 +560,73 @@
     return result;
   }
 
+  /* ---------- Surfaces: popup, side panel, floating window ---------- */
+
+  const SURFACE = document.documentElement.classList.contains('in-sidepanel')
+    ? 'panel'
+    : document.documentElement.classList.contains('in-window')
+      ? 'window'
+      : 'popup';
+  const FLOAT_URL = chrome.runtime.getURL('popup.html?window=1');
+  const FLOAT_BOUNDS_KEY = 'cm-float-bounds';
+  const FLOAT_SIZE = { width: 440, height: 640 };
+
   async function openSidePanel() {
     try {
-      const currentWindow = await chrome.windows.getCurrent();
-      await chrome.sidePanel.open({ windowId: currentWindow.id });
-      window.close();
+      // A floating window has no side panel of its own; use the browser window behind it.
+      const target = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
+      await chrome.sidePanel.open({ windowId: target.id });
+      if (SURFACE === 'popup') window.close();
     } catch (error) {
       console.error('Side panel failed:', error);
       toast('Could not open the side panel');
+    }
+  }
+
+  function savedFloatBounds() {
+    try {
+      const b = JSON.parse(localStorage.getItem(FLOAT_BOUNDS_KEY));
+      if ([b.left, b.top, b.width, b.height].every(Number.isFinite)) return b;
+    } catch {
+      /* nothing saved yet */
+    }
+    return null;
+  }
+
+  /** Open the floating window, or bring the existing one to the front. */
+  async function openFloatingWindow() {
+    try {
+      const [existing] = await chrome.runtime.getContexts({ contextTypes: ['TAB'], documentUrls: [FLOAT_URL] });
+      if (existing) {
+        await chrome.windows.update(existing.windowId, { focused: true, drawAttention: true });
+      } else {
+        const base = { url: FLOAT_URL, type: 'popup', focused: true };
+        try {
+          await chrome.windows.create({ ...base, ...(savedFloatBounds() || FLOAT_SIZE) });
+        } catch {
+          // The remembered position is off-screen (a display was unplugged)
+          await chrome.windows.create({ ...base, ...FLOAT_SIZE });
+        }
+      }
+      if (SURFACE === 'popup') window.close();
+    } catch (error) {
+      console.error('Floating window failed:', error);
+      toast('Could not open the floating window');
+    }
+  }
+
+  function initSurfaces() {
+    els.panelBtn.hidden = SURFACE === 'panel' || !chrome.sidePanel;
+    els.floatBtn.hidden = SURFACE === 'window';
+    els.panelBtn.addEventListener('click', openSidePanel);
+    els.floatBtn.addEventListener('click', openFloatingWindow);
+
+    if (SURFACE === 'window') {
+      // Reopen where the user left it
+      addEventListener('pagehide', () => {
+        const bounds = { left: screenX, top: screenY, width: outerWidth, height: outerHeight };
+        localStorage.setItem(FLOAT_BOUNDS_KEY, JSON.stringify(bounds));
+      });
     }
   }
 
@@ -654,7 +716,6 @@
     else if (action === 'select') setBulk(true);
     else if (action === 'import') CM.Data.pickImportFile();
     else if (action === 'export') CM.Data.exportItems('json');
-    else if (action === 'panel') openSidePanel();
     else if (action === 'settings') CM.Settings.open();
     else if (action === 'clear') clearHistory();
   }
@@ -824,6 +885,8 @@
       searchClear: $('#search-clear'),
       searchKbd: $('#search-kbd'),
       save: $('#save-btn'),
+      panelBtn: $('#panel-btn'),
+      floatBtn: $('#float-btn'),
       menuBtn: $('#menu-btn'),
       menu: $('#menu'),
       chips: $('#chips'),
@@ -859,8 +922,8 @@
 
     CM.hydrateIcons();
     els.searchKbd.textContent = IS_MAC ? '⌘K' : 'Ctrl K';
-    $('#menu-panel').hidden = document.documentElement.classList.contains('in-sidepanel') || !chrome.sidePanel;
     bindEvents();
+    initSurfaces();
     CM.Detail.init();
     CM.Settings.init();
     CM.Data.init();
@@ -882,11 +945,8 @@
       if (!document.hidden) render();
     }, 60000);
 
-    // The permission can be revoked from Chrome's own UI while we were closed
-    if (state.settings.autoCapture) {
-      const granted = await chrome.permissions.contains(CM.ALL_URLS).catch(() => false);
-      if (!granted) CM.Store.setSettings({ autoCapture: false });
-    }
+    // Opening the UI is one more chance to check the capture watcher is running
+    if (state.settings.autoCapture) chrome.runtime.sendMessage({ type: 'cm:sync-capture' }).catch(() => {});
   }
 
   document.addEventListener('DOMContentLoaded', init);

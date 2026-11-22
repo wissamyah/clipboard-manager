@@ -10,5 +10,8 @@
   } catch {
     /* storage unavailable: follow the system theme */
   }
-  if (new URLSearchParams(location.search).has('panel')) root.classList.add('in-sidepanel');
+  // The same page serves the popup, the side panel and the floating window.
+  const params = new URLSearchParams(location.search);
+  if (params.has('panel')) root.classList.add('in-sidepanel');
+  else if (params.has('window')) root.classList.add('in-window');
 })();

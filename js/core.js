@@ -17,7 +17,6 @@ CM.LEGACY_KEYS = ['tags', 'tagColors', 'categories'];
 CM.MAX_TEXT_LENGTH = 100000;
 CM.MAX_ITEMS_OPTIONS = [100, 500, 1000, 5000];
 CM.AUTO_DELETE_OPTIONS = [0, 7, 30, 90];
-CM.ALL_URLS = { origins: ['<all_urls>'] };
 
 CM.DEFAULT_SETTINGS = {
   theme: 'system', // system | light | dark

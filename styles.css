@@ -22,9 +22,11 @@ body {
   margin: 0;
 }
 
-/* Side panel: fill whatever space Chrome gives us */
+/* Side panel and floating window: fill whatever space Chrome gives us */
 html.in-sidepanel,
-html.in-sidepanel body {
+html.in-sidepanel body,
+html.in-window,
+html.in-window body {
   width: 100%;
   height: 100vh;
 }
