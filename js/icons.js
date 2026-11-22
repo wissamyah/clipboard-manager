@@ -23,15 +23,42 @@
     x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
     back: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
     chevron: '<polyline points="9 18 15 12 9 6"/>',
-    settings: '<line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>',
+    settings: '<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+    layers: '<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
     download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
     upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
     sidebar: '<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="15" y1="3" x2="15" y2="21"/>',
     select: '<polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
     external: '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
-    sortDesc: '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>',
-    sortAsc: '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>'
+    sortDesc: '<polyline points="3 16 7 20 11 16"/><line x1="7" y1="20" x2="7" y2="4"/><line x1="11" y1="4" x2="21" y2="4"/><line x1="11" y1="8" x2="18" y2="8"/><line x1="11" y1="12" x2="15" y2="12"/>',
+    sortAsc: '<polyline points="3 8 7 4 11 8"/><line x1="7" y1="4" x2="7" y2="20"/><line x1="11" y1="12" x2="15" y2="12"/><line x1="11" y1="16" x2="18" y2="16"/><line x1="11" y1="20" x2="21" y2="20"/>'
   };
+
+  /**
+   * Empty-state artwork: a clipboard on a tilted blob. Colours come from the
+   * `.art-*` classes in styles.css, so it follows the theme.
+   */
+  const EMPTY_ART =
+    '<svg class="art" viewBox="330 120 770 840" aria-hidden="true" focusable="false">' +
+    '<defs>' +
+    '<linearGradient id="art-g-blob" x1="0" y1="0" x2="1" y2="1"><stop class="art-blob-a" offset="0"/><stop class="art-blob-b" offset="1"/></linearGradient>' +
+    '<linearGradient id="art-g-paper" x1="0" y1="0" x2="0.4" y2="1"><stop class="art-paper-a" offset="0"/><stop class="art-paper-b" offset="1"/></linearGradient>' +
+    '<linearGradient id="art-g-clip" x1="0" y1="0" x2="0" y2="1"><stop class="art-clip-a" offset="0"/><stop class="art-clip-b" offset="1"/></linearGradient>' +
+    '<clipPath id="art-c-blob"><rect x="387" y="290.5" width="654" height="607" rx="150" transform="rotate(-17 714 594)"/></clipPath>' +
+    '</defs>' +
+    '<rect x="387" y="290.5" width="654" height="607" rx="150" transform="rotate(-17 714 594)" fill="url(#art-g-blob)"/>' +
+    '<circle class="art-swell" cx="880" cy="760" r="185" clip-path="url(#art-c-blob)"/>' +
+    '<g class="art-sparks"><line x1="936" y1="150" x2="918" y2="202"/><line x1="1016" y1="197" x2="975" y2="238"/><line x1="1057" y1="286" x2="1010" y2="297"/></g>' +
+    '<g class="art-board">' +
+    '<rect x="544" y="406" width="356" height="386" rx="68" fill="url(#art-g-paper)"/>' +
+    '<g class="art-lines"><rect x="606" y="518" width="232" height="30" rx="15"/><rect x="606" y="584" width="192" height="30" rx="15"/><rect x="606" y="651" width="140" height="30" rx="15"/></g>' +
+    '<g fill="url(#art-g-clip)"><circle cx="722" cy="378" r="43"/><rect x="639" y="378" width="167" height="63" rx="22"/></g>' +
+    '<circle class="art-hole" cx="722" cy="376" r="15"/>' +
+    '</g>' +
+    '</svg>';
+
+  /** @returns {string} static SVG markup for the first-run empty state */
+  CM.emptyArt = () => EMPTY_ART;
 
   /**
    * @param {string} name

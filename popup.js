@@ -12,12 +12,13 @@
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
   const FILTERS = [
-    ['all', 'All'],
-    ['pinned', 'Pinned'],
-    ['favorites', 'Favorites'],
-    ['url', 'Links'],
-    ['code', 'Code']
+    ['all', 'All', 'layers'],
+    ['pinned', 'Pinned', 'pin'],
+    ['favorites', 'Favorites', 'star'],
+    ['url', 'Links', 'link'],
+    ['code', 'Code', 'code']
   ];
+  const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform);
   const TYPE_ICONS = { url: 'link', email: 'mail', phone: 'phone', code: 'code', text: 'text' };
   const PREVIEW_LENGTH = 320;
 
@@ -150,14 +151,15 @@
     const signature = tags.join('\u0001');
     if (signature !== chipsSignature) {
       chipsSignature = signature;
-      const chips = FILTERS.map(([value, label]) =>
-        h('button', { type: 'button', class: 'chip', dataset: { filter: value } }, label)
+      const chips = FILTERS.map(([value, label, icon]) =>
+        h('button', { type: 'button', class: 'chip', dataset: { filter: value }, html: CM.icon(icon, 14) }, label)
       );
       if (tags.length) chips.push(h('span', { class: 'chip-sep', 'aria-hidden': 'true' }));
       for (const tag of tags) {
         chips.push(h('button', { type: 'button', class: 'chip', dataset: { tag }, title: `Tag: ${tag}` }, `#${tag}`));
       }
       els.chips.replaceChildren(...chips);
+      syncChipsOverflow();
     }
     for (const chip of els.chips.querySelectorAll('.chip')) {
       const pressed = chip.dataset.filter ? chip.dataset.filter === state.filter : state.tags.has(chip.dataset.tag);
@@ -165,9 +167,14 @@
     }
 
     const newest = state.sort === 'desc';
-    els.sort.innerHTML = CM.icon(newest ? 'sortDesc' : 'sortAsc', 15);
+    els.sort.innerHTML = CM.icon(newest ? 'sortDesc' : 'sortAsc', 14);
     els.sort.title = newest ? 'Newest first' : 'Oldest first';
     els.sort.setAttribute('aria-label', `Sort order: ${els.sort.title}`);
+  }
+
+  /** The fade on the right edge only shows while there are chips to scroll to. */
+  function syncChipsOverflow() {
+    els.chips.classList.toggle('overflowing', els.chips.scrollWidth > els.chips.clientWidth + 1);
   }
 
   function actionButton(action, icon, label, extraClass = '', filled = false) {
@@ -347,13 +354,14 @@
           h('div', { class: 'empty-icon', html: CM.icon('search', 22) }),
           h('div', { class: 'empty-title' }, 'No matches'),
           h('div', { class: 'empty-text' }, 'Nothing in your history fits this search and these filters.'),
-          h('button', { type: 'button', class: 'btn sm', onclick: resetFilters }, 'Clear filters')
+          h('button', { type: 'button', class: 'btn', onclick: resetFilters }, 'Clear filters')
         ]
       : [
-          h('div', { class: 'empty-icon', html: CM.icon('clipboard', 22) }),
+          h('div', { class: 'empty-art', html: CM.emptyArt() }),
           h('div', { class: 'empty-title' }, 'Nothing saved yet'),
           h('div', { class: 'empty-text' }, 'Copy some text, then press Save. You can also turn on automatic saving in Settings.'),
-          h('button', { type: 'button', class: 'btn sm btn-primary', onclick: saveClipboard }, 'Save clipboard')
+          h('button', { type: 'button', class: 'btn btn-primary lg', onclick: saveClipboard, html: CM.icon('clipboard', 18) }, 'Save clipboard'),
+          h('button', { type: 'button', class: 'btn sm', onclick: () => CM.Settings.open(), html: CM.icon('settings', 14) }, 'Open Settings')
         ];
     const signature = filtered ? 'filtered' : 'first-run';
     if (els.empty.hidden || els.empty.dataset.kind !== signature) {
@@ -368,6 +376,7 @@
     const shown = state.visible.length;
     els.count.textContent = shown === total ? plural(total, 'item') : `${shown.toLocaleString()} of ${plural(total, 'item')}`;
     els.searchClear.hidden = !state.query;
+    els.searchKbd.hidden = Boolean(state.query);
 
     els.app.classList.toggle('bulk', state.bulk);
     els.bulkbar.hidden = !state.bulk;
@@ -677,6 +686,13 @@
     if (inOtherField) return;
     const mod = event.metaKey || event.ctrlKey;
 
+    if (mod && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      els.search.focus();
+      els.search.select();
+      return;
+    }
+
     switch (event.key) {
       case 'ArrowDown':
       case 'ArrowUp':
@@ -766,6 +782,7 @@
       render({ animate: true });
     });
     els.chips.addEventListener('click', onChipClick);
+    new ResizeObserver(syncChipsOverflow).observe(els.chips);
     els.list.addEventListener('click', onListClick);
 
     els.menu.addEventListener('click', onMenuClick);
@@ -805,6 +822,7 @@
       app: $('#app'),
       search: $('#search'),
       searchClear: $('#search-clear'),
+      searchKbd: $('#search-kbd'),
       save: $('#save-btn'),
       menuBtn: $('#menu-btn'),
       menu: $('#menu'),
@@ -840,6 +858,7 @@
     };
 
     CM.hydrateIcons();
+    els.searchKbd.textContent = IS_MAC ? '⌘K' : 'Ctrl K';
     $('#menu-panel').hidden = document.documentElement.classList.contains('in-sidepanel') || !chrome.sidePanel;
     bindEvents();
     CM.Detail.init();

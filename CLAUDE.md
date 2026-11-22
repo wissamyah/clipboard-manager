@@ -62,7 +62,7 @@ schemaVersion: 2
 - Animate only `transform` and `opacity`, using the `--dur-*` / `--ease-*` tokens. List reordering is animated by the FLIP helper in `popup.js` (`withListAnimation`).
 
 ### Keyboard (in popup)
-- Typing: search. Up/Down: move selection. Enter: copy. Shift+Enter: details. Ctrl/Cmd+Backspace: delete (with undo). Esc: back / clear search / close.
+- Typing: search. Ctrl/Cmd+K: focus search. Up/Down: move selection. Enter: copy. Shift+Enter: details. Ctrl/Cmd+Backspace: delete (with undo). Esc: back / clear search / close.
 - The key handler ignores events from other text fields, so editing never triggers list actions.
 
 ### Destructive actions

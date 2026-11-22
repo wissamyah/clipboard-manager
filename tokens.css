@@ -35,6 +35,14 @@
   --accent-soft: light-dark(rgb(189 238 103 / 0.32), rgb(211 253 80 / 0.13));
   --accent-ring: light-dark(rgb(79 123 35 / 0.28), rgb(211 253 80 / 0.34));
   --selected: light-dark(#eef8d6, #151b12);
+  /* Primary buttons are a two-stop lime gradient with a soft glow.
+     --accent-line outlines selected chips and the focused search field;
+     --accent-vivid is the saturated green of the empty-state artwork. */
+  --accent-hi: light-dark(#d2f784, #e2ff86);
+  --accent-lo: light-dark(#a8e548, #c4f23a);
+  --accent-glow: light-dark(rgb(134 206 44 / 0.42), rgb(211 253 80 / 0.2));
+  --accent-line: light-dark(#a6da68, rgb(211 253 80 / 0.5));
+  --accent-vivid: light-dark(#69b925, #d3fd50);
 
   /* Status */
   --danger: light-dark(#cf3341, #ffa0ad);
@@ -58,10 +66,11 @@
   --backdrop: light-dark(rgb(21 33 38 / 0.32), rgb(0 0 0 / 0.55));
 
   /* Shape */
-  --radius-xs: 3px;
-  --radius-sm: 4px;
-  --radius: 6px;
-  --radius-lg: 8px;
+  --radius-xs: 5px;
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
 
   /* Motion */
   --dur-1: 120ms;
