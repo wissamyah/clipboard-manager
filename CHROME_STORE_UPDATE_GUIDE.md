@@ -1,11 +1,11 @@
-# Chrome Web Store Update Guide for Clipboard Manager v2.0.0
+# Chrome Web Store Update Guide for Clipboard Manager v2.1.0
 
 ## Pre-Update Checklist
-- [x] Version updated in manifest.json to "2.0.0"
+- [x] Version updated in manifest.json to "2.1.0"
 - [x] documentation.html updated for the new interface and features
 - [x] privacy_policy.html updated (automatic saving, new permissions, Limited Use statement)
 - [ ] Load the unpacked extension and test on a real Chrome profile (see "What to test" below)
-- [ ] Test the update path: install v1.2.1 with some saved items, then load v2.0.0 over it and confirm the history is migrated
+- [ ] Test the update path: install v1.2.1 with some saved items, then load v2.1.0 over it and confirm the history is migrated
 - [ ] Publish the updated privacy_policy.html to its public URL (GitHub Pages) **before** submitting. It now needs `tokens.css`, `pages.css`, `js/theme-init.js` and `icon-48.png` next to it
 - [ ] Confirm the "Last updated" / "Effective" dates in privacy_policy.html match the day you publish
 - [ ] Create a backup of the current store version
@@ -22,7 +22,7 @@ The folder now contains development files that must **not** be uploaded (`node_m
 
 ```bash
 # macOS / Linux, run in the extension directory:
-zip -r ../clipboard-manager-v2.0.0.zip \
+zip -r ../clipboard-manager-v2.1.0.zip \
   manifest.json background.js popup.html popup.js \
   styles.css tokens.css pages.css \
   documentation.html privacy_policy.html \
@@ -31,7 +31,7 @@ zip -r ../clipboard-manager-v2.0.0.zip \
 
 ```powershell
 # Windows PowerShell:
-Compress-Archive -Force -DestinationPath ../clipboard-manager-v2.0.0.zip -Path `
+Compress-Archive -Force -DestinationPath ../clipboard-manager-v2.1.0.zip -Path `
   manifest.json, background.js, popup.html, popup.js, styles.css, tokens.css, pages.css, `
   documentation.html, privacy_policy.html, icon-16.png, icon-48.png, icon-128.png, js
 ```
@@ -45,7 +45,7 @@ Compress-Archive -Force -DestinationPath ../clipboard-manager-v2.0.0.zip -Path `
 1. Click on "Clipboard Manager" extension
 2. Navigate to "Package" tab
 3. Click "Upload new package"
-4. Upload `clipboard-manager-v2.0.0.zip`
+4. Upload `clipboard-manager-v2.1.0.zip`
 5. Wait for validation to complete
 
 ## Step 4: Update Store Listing

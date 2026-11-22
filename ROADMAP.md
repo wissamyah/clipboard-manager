@@ -239,9 +239,9 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 ---
 
 ## 🎯 Current Status
-**Just Completed:** Version 2.0.0 - full UI rework (see log below)
+**Just Completed:** Version 2.1.0 - visual refresh of the popup (see log below)
 **Next Up:** Phase 8 - Security & Privacy (encryption, per-site capture rules)
-**Current Version:** 2.0.0
+**Current Version:** 2.1.0
 
 ---
 
@@ -276,7 +276,7 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 - ✅ Fixed virtual scrolling issues
 - ✅ Removed unnecessary toast notifications
 
-### Version 2.0.0 (Current)
+### Version 2.0.0
 - New command-palette style interface: compact rows, filter chips, click-to-copy with inline confirmation
 - Design system with light (cream, slate and lime) and dark (near-black and neon lime) themes, system-aware
 - Motion: animated list reordering, slide-over panels, reduced-motion support
@@ -290,12 +290,19 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 - Fixes: saves failing past the item limit, unescaped HTML in previews, network requests to Google (fonts, favicons), keyboard handler acting on text fields
 - Removed: statistics dashboard page (now a small Settings section), Optimize Storage button, unused fonts and icons
 
-### Ideas for 2.1
+### Version 2.1.0 (Current)
+- Visual refresh: rounded search bar, pill buttons with a lime gradient, filter chips with icons, taller footer with boxed key hints
+- New empty state with an illustration, "Save clipboard" and "Open Settings"
+- One shared input style across the search bar, the snippet form and Settings
+- Ctrl/Cmd+K focuses search
+- No change to permissions, capture behaviour or stored data
+
+### Ideas for later
 - Syntax highlighting in the detail panel
 - Image clipboard support
 - Per-site rules for automatic capture
 
 ---
 
-*Last Updated: 2026-11-21*
-*Current Version: 2.0.0*
+*Last Updated: 2026-11-22*
+*Current Version: 2.1.0*
