@@ -501,6 +501,31 @@ svg {
   transition: background var(--dur-1);
 }
 
+/* Position number, shown over the tile while Ctrl/Cmd is held */
+.row[data-n]::after {
+  content: attr(data-n);
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  font: 600 12px/1 var(--font);
+  color: var(--text);
+  background: var(--surface-3);
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity var(--dur-1);
+}
+
+.app.show-nums:not(.bulk) .row[data-n]::after {
+  opacity: 1;
+  transition-delay: 180ms; /* not on a quick Ctrl/Cmd+K */
+}
+
 .row:hover .row-type,
 .row.active .row-type {
   background: var(--surface-3);
@@ -956,6 +981,35 @@ mark {
 
 .app.bulk .hints {
   visibility: hidden;
+}
+
+/* Shown in place of the hints while automatic saving is paused */
+.app.capture-paused .hints {
+  display: none;
+}
+
+.pause-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  font-size: 11.5px;
+  color: var(--text-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--dur-1);
+}
+
+.pause-pill:hover {
+  background: var(--surface-3);
+}
+
+.pause-resume {
+  font-weight: 600;
+  color: var(--text);
 }
 
 /* ---------- Menu (popover) ---------- */

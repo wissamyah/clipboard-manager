@@ -1,11 +1,11 @@
-# Chrome Web Store Update Guide for Clipboard Manager v2.2.0
+# Chrome Web Store Update Guide for Clipboard Manager v2.3.0
 
 ## Pre-Update Checklist
-- [x] Version updated in manifest.json to "2.2.0"
+- [x] Version updated in manifest.json to "2.3.0"
 - [x] documentation.html updated for the new interface and features
-- [x] privacy_policy.html updated (automatic saving from the system clipboard, offscreen/alarms permissions, site access removed)
+- [x] privacy_policy.html updated (2.3: paste into the page, right-click paste list, pausing, wider secret skipping; 2.2: automatic saving from the system clipboard, offscreen/alarms permissions, site access removed)
 - [ ] Load the unpacked extension and test on a real Chrome profile (see "What to test" below)
-- [ ] Test the update path: install v1.2.1 with some saved items, then load v2.2.0 over it and confirm the history is migrated
+- [ ] Test the update path: install v1.2.1 with some saved items, then load v2.3.0 over it and confirm the history is migrated
 - [ ] Publish the updated privacy_policy.html to its public URL (GitHub Pages) **before** submitting. It now needs `tokens.css`, `pages.css`, `js/theme-init.js` and `icon-48.png` next to it
 - [ ] Confirm the "Last updated" / "Effective" dates in privacy_policy.html match the day you publish
 - [ ] Create a backup of the current store version
@@ -16,6 +16,12 @@
 - Turning "Save copies automatically" on and off (no permission prompt). With it on, copy text in another app, in the address bar and on a page: each appears within about a second, also while Chrome is in the background
 - Update path for capture: load v2.1.0 with automatic saving on, then load v2.2.0 over it. Capture keeps working and `chrome://extensions` no longer lists site access
 - Right-click → "Save selection to Clipboard Manager"
+- Paste into the page (new in 2.3): focus an `<input>`, a `<textarea>`, a rich editor (Gmail compose) and a field inside an iframe, then open the popup and use the paste button and Ctrl/Cmd+Enter. The text lands at the caret and the popup closes. With no field focused, or on `chrome://` pages, it copies instead and says so. Repeat from the side panel and the floating window
+- Right-click a text field → "Paste from Clipboard Manager": pinned items first, then recent ones; the list follows the history as it changes
+- Ctrl/Cmd+1…9 copies the row in that position; holding Ctrl/Cmd shows the numbers
+- Select items → copy several as one
+- With automatic saving on: ⋯ → "Pause saving for 5 minutes". Copies made during the pause never appear, the footer shows the resume time, "Resume" works, and saving restarts by itself when the time is up
+- A private key, a JWT and a `ghp_…` token are not captured; with "Skip card numbers and secret keys" off they are
 - Alt+Shift+V shortcut, the side panel and floating window buttons next to Save, import and export
 
 ## Step 1: Create Extension Package
@@ -23,7 +29,7 @@ The folder now contains development files that must **not** be uploaded (`node_m
 
 ```bash
 # macOS / Linux, run in the extension directory:
-zip -r ../clipboard-manager-v2.2.0.zip \
+zip -r ../clipboard-manager-v2.3.0.zip \
   manifest.json background.js popup.html popup.js offscreen.html \
   styles.css tokens.css pages.css \
   documentation.html privacy_policy.html \
@@ -32,7 +38,7 @@ zip -r ../clipboard-manager-v2.2.0.zip \
 
 ```powershell
 # Windows PowerShell:
-Compress-Archive -Force -DestinationPath ../clipboard-manager-v2.2.0.zip -Path `
+Compress-Archive -Force -DestinationPath ../clipboard-manager-v2.3.0.zip -Path `
   manifest.json, background.js, popup.html, popup.js, offscreen.html, styles.css, tokens.css, pages.css, `
   documentation.html, privacy_policy.html, icon-16.png, icon-48.png, icon-128.png, js
 ```
@@ -46,7 +52,7 @@ Compress-Archive -Force -DestinationPath ../clipboard-manager-v2.2.0.zip -Path `
 1. Click on "Clipboard Manager" extension
 2. Navigate to "Package" tab
 3. Click "Upload new package"
-4. Upload `clipboard-manager-v2.2.0.zip`
+4. Upload `clipboard-manager-v2.3.0.zip`
 5. Wait for validation to complete
 
 ## Step 4: Update Store Listing
@@ -55,6 +61,13 @@ Compress-Archive -Force -DestinationPath ../clipboard-manager-v2.2.0.zip -Path `
 Replace the v1.2.1 feature text (the statistics dashboard, storage optimization, compression and markdown preview no longer exist):
 
 ```
+NEW IN 2.3
+• Paste a saved item straight into the page: paste button, Ctrl/Cmd+Enter, or right-click a text field
+• Ctrl/Cmd+1 to 9 copies the item in that position
+• Copy several selected items as one
+• Pause automatic saving for 5 minutes or 1 hour
+• Automatic saving skips private keys and access tokens as well as card numbers
+
 NEW IN 2.2
 • Automatic saving now records text you copy anywhere on your computer, not only on web pages (optional, off by default)
 • No access to the sites you visit is needed any more
@@ -101,12 +114,12 @@ Open the "Privacy practices" tab. Several answers change in v2.0.0.
 - **clipboardRead**: "Reads clipboard text when the user clicks Save. If the user turns on 'Save copies automatically', also reads the clipboard about once a second to add newly copied text to the local history"
 - **clipboardWrite**: "Copies a saved item back to the clipboard when the user clicks it"
 - **storage**: "Stores the clipboard history and settings locally on the user's device"
-- **contextMenus**: "Adds a 'Save selection to Clipboard Manager' item to the right-click menu"
-- **activeTab**: "Gives access to the current page only when the user chooses that menu item, to read the selected text with its line breaks"
-- **scripting**: "Reads the selected text for the context-menu item"
+- **contextMenus**: "Adds 'Save selection to Clipboard Manager' on selected text, and on text fields a 'Paste from Clipboard Manager' submenu listing the user's pinned and most recent saved items"
+- **activeTab**: "Gives access to the current page only when the user invokes the extension there: to read the selected text for 'Save selection', or to insert a saved item the user picked into the focused text field"
+- **scripting**: "Reads the selected text for 'Save selection', and inserts the saved item the user chose into the focused text field ('Paste into the page'). The injected function is part of the package; nothing runs on a page without a user action"
 - **sidePanel**: "Lets the user open their clipboard history in Chrome's side panel"
 - **offscreen**: "Service workers cannot read the clipboard. While the user has 'Save copies automatically' turned on, an offscreen document (reason: CLIPBOARD) reads the clipboard text and passes it to the service worker, which stores it in chrome.storage.local. The document is closed when the setting is turned off. Nothing is transmitted"
-- **alarms**: "A one-minute alarm, set only while 'Save copies automatically' is on, re-opens the offscreen clipboard document if Chrome has closed it"
+- **alarms**: "A one-minute alarm, set only while 'Save copies automatically' is on, re-opens the offscreen clipboard document if Chrome has closed it. A second, one-off alarm resumes automatic saving when a pause the user started ends"
 - **Host permissions**: none. The optional `<all_urls>` permission from v2.0-2.1 is removed; the update revokes it for users who had granted it
 
 ### Remote code
@@ -119,7 +132,7 @@ v1.2.1 declared "This extension does not collect user data". With automatic savi
 - ✅ "I do not use or transfer user data to determine creditworthiness or for lending purposes"
 
 ### Privacy policy URL
-Must point to the published v2.2.0 policy.
+Must point to the published v2.3.0 policy.
 
 ## Step 6: Distribution Settings
 - **Visibility**: Public
@@ -132,6 +145,7 @@ Must point to the published v2.2.0 policy.
 3. Click "Submit"
 
 ## Review Timeline
+- v2.3.0 adds no permission, but it starts writing into pages (at the user's request) through the existing activeTab and scripting permissions; the justifications above were updated for that
 - v2.2.0 widens what automatic saving reads (the system clipboard) and adds the offscreen and alarms permissions, so expect an in-depth review that can take longer than the usual 1-3 business days
 - Email notification upon approval/rejection
 

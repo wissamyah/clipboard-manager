@@ -23,8 +23,13 @@ CM.DEFAULT_SETTINGS = {
   autoCapture: false,
   maxItems: 1000,
   autoDeleteDays: 0, // 0 = never
-  relativeTime: true
+  relativeTime: true,
+  skipSensitive: true, // automatic capture skips card numbers and secret keys
+  pauseUntil: 0 // ms timestamp; automatic capture is paused until then
 };
+
+/** Whether automatic capture should be running right now. */
+CM.captureActive = (settings, now = Date.now()) => settings.autoCapture && now >= settings.pauseUntil;
 
 CM.uid = () => crypto.randomUUID();
 
@@ -95,13 +100,23 @@ CM.normalizeUrl = (text) => {
   }
 };
 
-/**
- * Heuristic used by automatic capture to skip payment card numbers.
- * @param {string} text
- * @returns {boolean}
- */
-CM.looksSensitive = (text) => {
-  const t = String(text).trim();
+// Secrets with a recognizable shape. Each must match the whole (trimmed) text,
+// so prose or code that merely mentions a token is still saved.
+const SECRET_TOKEN_RES = [
+  /^eyJ[\w-]{8,}\.eyJ[\w-]{8,}\.[\w-]*$/, // JSON Web Token
+  /^A[KS]IA[0-9A-Z]{16}$/, // AWS access key id
+  /^gh[pousr]_[A-Za-z0-9]{36,}$/, // GitHub token
+  /^github_pat_\w{40,}$/,
+  /^glpat-[\w-]{20,}$/, // GitLab token
+  /^xox[abeoprs]-[\w-]{10,}$/, // Slack token
+  /^[sr]k_(?:live|test)_[A-Za-z0-9]{16,}$/, // Stripe key
+  /^sk-[\w-]{20,}$/, // OpenAI / Anthropic style key
+  /^AIza[\w-]{35}$/, // Google API key
+  /^npm_[A-Za-z0-9]{36}$/
+];
+const PRIVATE_KEY_RE = /-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY(?: BLOCK)?-----/;
+
+function looksLikeCardNumber(t) {
   if (!/^[\d\s-]{13,23}$/.test(t)) return false;
   const digits = t.replace(/\D/g, '');
   if (digits.length < 13 || digits.length > 19) return false;
@@ -118,6 +133,17 @@ CM.looksSensitive = (text) => {
     double = !double;
   }
   return sum % 10 === 0;
+}
+
+/**
+ * Heuristic used by automatic capture to skip payment card numbers, private
+ * keys and access tokens. Passwords have no shape and cannot be recognized.
+ * @param {string} text
+ * @returns {boolean}
+ */
+CM.looksSensitive = (text) => {
+  const t = String(text).trim();
+  return looksLikeCardNumber(t) || PRIVATE_KEY_RE.test(t) || SECRET_TOKEN_RES.some((re) => re.test(t));
 };
 
 /** Strip surrounding blank lines and trailing whitespace, keep indentation. */
@@ -181,7 +207,9 @@ CM.normalizeSettings = (raw) => {
     autoCapture: s.autoCapture === true,
     maxItems: CM.MAX_ITEMS_OPTIONS.includes(Number(s.maxItems)) ? Number(s.maxItems) : 1000,
     autoDeleteDays: CM.AUTO_DELETE_OPTIONS.includes(Number(s.autoDeleteDays)) ? Number(s.autoDeleteDays) : 0,
-    relativeTime: s.relativeTime !== false
+    relativeTime: s.relativeTime !== false,
+    skipSensitive: s.skipSensitive !== false,
+    pauseUntil: Number.isFinite(Number(s.pauseUntil)) && Number(s.pauseUntil) > 0 ? Math.round(Number(s.pauseUntil)) : 0
   };
 };
 
@@ -214,6 +242,113 @@ CM.formatBytes = (bytes) => {
   if (!bytes) return '0 KB';
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+};
+
+/* ---------- Pasting into a page ---------- */
+
+/**
+ * Runs inside the page (chrome.scripting), so it must not use anything from
+ * this file. Inserts `text` at the caret of the focused field, or with
+ * `probe` only reports what is focused.
+ * @returns {'ok'|'editable'|'frame'|'none'}
+ */
+function pageInsert(text, probe) {
+  let el = document.activeElement;
+  while (el && el.shadowRoot && el.shadowRoot.activeElement) el = el.shadowRoot.activeElement;
+  if (!el) return 'none';
+  if (el.tagName === 'IFRAME' || el.tagName === 'FRAME') return 'frame';
+
+  const isField =
+    el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && /^(text|search|url|tel|email|password)$/.test(el.type));
+  if (isField ? el.disabled || el.readOnly : !el.isContentEditable) return 'none';
+  if (probe) return 'editable';
+
+  const event = () => new InputEvent('input', { bubbles: true, inputType: 'insertText', data: text });
+
+  if (isField) {
+    // insertText keeps the page's undo history; it can refuse when the page
+    // is not the focused window, so fall back to editing the value.
+    const before = el.value;
+    let done = false;
+    try {
+      done = document.execCommand('insertText', false, text) && el.value !== before;
+    } catch {
+      done = false;
+    }
+    if (!done) {
+      try {
+        el.setRangeText(text, el.selectionStart, el.selectionEnd, 'end');
+      } catch {
+        // Email fields have no selection API. Use the prototype setter so
+        // frameworks that wrap `value` still see the change.
+        const proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+        Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, before + text);
+      }
+      el.dispatchEvent(event());
+    }
+    return 'ok';
+  }
+
+  let done = false;
+  try {
+    done = document.execCommand('insertText', false, text);
+  } catch {
+    done = false;
+  }
+  if (!done) {
+    const selection = getSelection();
+    const range = selection && selection.rangeCount ? selection.getRangeAt(0) : null;
+    if (!range || !el.contains(range.commonAncestorContainer)) return 'none';
+    range.deleteContents();
+    range.insertNode(document.createTextNode(text));
+    range.collapse(false);
+    el.dispatchEvent(event());
+  }
+  return 'ok';
+}
+
+/**
+ * Insert text into the field that has focus in a tab. Needs access to the
+ * tab, which activeTab grants when the user opens the popup or uses the
+ * context menu there.
+ * @param {number} tabId
+ * @param {string} text
+ * @param {number} [frameId] the frame to paste into, when it is known
+ * @returns {Promise<'ok'|'none'|'blocked'>} 'none': no editable field has
+ *   focus; 'blocked': the page cannot be reached
+ */
+CM.pasteIntoTab = async (tabId, text, frameId) => {
+  const run = async (target, probe) =>
+    (await chrome.scripting.executeScript({ target, func: pageInsert, args: [text, probe] })).map((r) => ({
+      frameId: r.frameId,
+      state: r.result
+    }));
+
+  try {
+    if (frameId == null) {
+      // Find the frame holding the focused field without touching anything.
+      let frames;
+      try {
+        frames = await run({ tabId, allFrames: true }, true);
+      } catch {
+        frames = await run({ tabId }, true);
+      }
+      const top = frames.find((f) => f.frameId === 0);
+      if (top?.state === 'editable') {
+        frameId = 0;
+      } else {
+        // Every frame remembers its own focused element, so with several
+        // candidates there is no telling which one the user means.
+        const candidates = frames.filter((f) => f.frameId !== 0 && f.state === 'editable');
+        if (top?.state !== 'frame' || candidates.length !== 1) return 'none';
+        frameId = candidates[0].frameId;
+      }
+    }
+    const [result] = await run({ tabId, frameIds: [frameId] }, false);
+    return result?.state === 'ok' ? 'ok' : 'none';
+  } catch {
+    return 'blocked';
+  }
 };
 
 /* ---------- Storage ---------- */

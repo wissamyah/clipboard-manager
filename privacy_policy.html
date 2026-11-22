@@ -45,7 +45,7 @@
         <h1>Your clipboard stays on your device</h1>
         <p class="lead">This policy explains what Clipboard Manager stores, when it reads text, and the control you have over it.</p>
         <div class="meta">
-          <span class="pill accent">Version 2.2.0</span>
+          <span class="pill accent">Version 2.3.0</span>
           <span class="pill">Last updated November 22, 2026</span>
           <span class="pill">Effective November 22, 2026</span>
         </div>
@@ -57,8 +57,17 @@
       </div>
 
       <section id="changes">
-        <h2>What changed in version 2.2</h2>
-        <p>Version 2.2 changes how automatic saving works, and with it what the extension can read.</p>
+        <h2>What changed in version 2.3</h2>
+        <p>Version 2.3 adds a way to put saved text straight into a page, and more control over automatic saving. No new permission is requested.</p>
+        <ul>
+          <li><strong>Paste into the page.</strong> When you ask for it (the paste button on an item, <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>Enter</kbd>, or right-click → <strong>Paste from Clipboard Manager</strong>), the extension inserts that item's text into the text field you are in. It looks for the focused field and writes the text there; it does not read the page's content. This uses the permissions the right-click “Save selection” item already had.</li>
+          <li><strong>The right-click menu lists a few saved items.</strong> In a text field, the menu shows the start of up to ten items (pinned first, then the most recent) so you can pick one. Chrome keeps these labels on your device like the rest of your history.</li>
+          <li><strong>Pause automatic saving.</strong> You can pause it for 5 minutes or 1 hour. While paused, the clipboard is not read at all.</li>
+          <li><strong>More secrets are skipped.</strong> Besides payment-card numbers, automatic saving now leaves out text that looks like a private key or an access token. This can be turned off in Settings. Passwords still cannot be recognized.</li>
+        </ul>
+
+        <h3>What changed in version 2.2</h3>
+        <p>Version 2.2 changed how automatic saving works, and with it what the extension can read.</p>
         <ul>
           <li><strong>Automatic saving now covers everything you copy.</strong> It used to save only text copied on web pages. It now reads the clipboard itself, so it also saves text you copy in other apps, in the address bar and in PDFs, for as long as Chrome is running. It is still optional and off by default.</li>
           <li><strong>Password fields are no longer recognized.</strong> The clipboard does not say where a copy came from, so a password you copy while automatic saving is on is saved like any other text. Text that looks like a payment-card number is still skipped.</li>
@@ -92,7 +101,7 @@
               <tr><td><strong>Names and tags</strong></td><td>Labels you add to organize items.</td></tr>
               <tr><td><strong>Pins and favorites</strong></td><td>Which items you marked as important.</td></tr>
               <tr><td><strong>Content type</strong></td><td>A label worked out on your device (link, email, phone, color, code or text).</td></tr>
-              <tr><td><strong>Settings</strong></td><td>Theme, automatic saving, item limit, automatic deletion and time format.</td></tr>
+              <tr><td><strong>Settings</strong></td><td>Theme, automatic saving (including whether it is paused and whether secrets are skipped), item limit, automatic deletion and time format.</td></tr>
             </tbody>
           </table>
         </div>
@@ -106,17 +115,21 @@
         <ul>
           <li>While Chrome is running, the extension checks the clipboard about once a second from a hidden page of its own.</li>
           <li>When the text on the clipboard changes, the new text is saved to your local history. This covers anything you copy or cut on your computer, in Chrome (including Incognito windows) or in any other app, even while Chrome is in the background.</li>
-          <li>Text that looks like a payment-card number is skipped. Nothing else is filtered: the clipboard does not reveal which app or field a copy came from, so passwords and other secrets you copy are saved.</li>
+          <li>Text that looks like a payment-card number, a private key or an access token in a well-known format (for example GitHub, AWS, Stripe or a JSON Web Token) is skipped, unless you turn off <strong>Skip card numbers and secret keys</strong>. Nothing else is filtered: the clipboard does not reveal which app or field a copy came from, so passwords, one-time codes and other secrets without a recognizable shape are saved.</li>
+          <li>You can pause automatic saving for 5 minutes or 1 hour from the <strong>⋯</strong> menu. During a pause the hidden page is closed and the clipboard is not read; what you copy in that time is never saved, including after the pause ends.</li>
           <li>Only text is read. Images and files are ignored. Whatever was on the clipboard before you turned the setting on, or before Chrome started, is not saved.</li>
-          <li>The extension does not read or change the pages you visit, and it does not send anything anywhere.</li>
+          <li>Automatic saving does not read or change the pages you visit, and it does not send anything anywhere.</li>
           <li>Turning the setting off closes the hidden page and stops the clipboard checks immediately. Nothing is read when Chrome is not running.</li>
         </ul>
         <div class="note warn">
-          <p><strong>Please note:</strong> with automatic saving on, sensitive text you copy, such as a password from a password manager, an API key or a one-time code, will be saved. Saved text is not encrypted. Delete such items from your history, or leave automatic saving off if you copy secrets often.</p>
+          <p><strong>Please note:</strong> with automatic saving on, sensitive text you copy, such as a password from a password manager or a one-time code, will be saved. Saved text is not encrypted. Pause automatic saving before you copy a secret, delete such items from your history, or leave automatic saving off if you copy secrets often.</p>
         </div>
 
         <h3>Saving a selection from the right-click menu</h3>
         <p>When you choose <strong>Save selection to Clipboard Manager</strong>, the extension reads the selected text on that page at that moment and saves it. It does not read anything else on the page, and it works whether or not automatic saving is on.</p>
+
+        <h3>Pasting a saved item into a page</h3>
+        <p>When you use the paste button on an item, press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>Enter</kbd>, or choose an item under <strong>Paste from Clipboard Manager</strong> in the right-click menu, the extension inserts that item's text into the text field that has focus on the current page. It checks which field is focused and writes the text there. It does not read what the page or the field contains, it does nothing on a page until you ask, and the page receives only the text you chose to paste.</p>
       </section>
 
       <section id="not">
@@ -170,12 +183,12 @@
               <tr><td><strong>clipboardRead</strong></td><td>Read the text on your clipboard when you click Save and, if you turn on automatic saving, whenever the clipboard changes.</td></tr>
               <tr><td><strong>clipboardWrite</strong></td><td>Copy a saved item back to your clipboard when you click it.</td></tr>
               <tr><td><strong>storage</strong></td><td>Keep your history and settings in Chrome's local storage.</td></tr>
-              <tr><td><strong>contextMenus</strong></td><td>Add the “Save selection to Clipboard Manager” item to the right-click menu.</td></tr>
-              <tr><td><strong>activeTab</strong></td><td>Reach the current page only at the moment you use that menu item.</td></tr>
-              <tr><td><strong>scripting</strong></td><td>Read the selected text for that menu item.</td></tr>
+              <tr><td><strong>contextMenus</strong></td><td>Add “Save selection to Clipboard Manager” and “Paste from Clipboard Manager” to the right-click menu.</td></tr>
+              <tr><td><strong>activeTab</strong></td><td>Reach the current page only at the moment you use one of those menu items or paste an item into the page.</td></tr>
+              <tr><td><strong>scripting</strong></td><td>Read the selected text for “Save selection”, and insert the item you chose into the focused text field when you paste.</td></tr>
               <tr><td><strong>sidePanel</strong></td><td>Show the history in Chrome's side panel.</td></tr>
               <tr><td><strong>offscreen</strong></td><td>Open the hidden page that checks the clipboard, only while automatic saving is on. Chrome does not let an extension read the clipboard in the background any other way.</td></tr>
-              <tr><td><strong>alarms</strong></td><td>Check once a minute that this hidden page is still open while automatic saving is on.</td></tr>
+              <tr><td><strong>alarms</strong></td><td>Check once a minute that this hidden page is still open while automatic saving is on, and resume automatic saving when a pause ends.</td></tr>
             </tbody>
           </table>
         </div>

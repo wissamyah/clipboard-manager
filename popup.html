@@ -44,6 +44,7 @@
         <span class="bulk-count" id="bulk-count">0 selected</span>
         <button type="button" class="btn sm" id="bulk-all">Select all</button>
         <span class="spacer"></span>
+        <button type="button" class="icon-btn sm" id="bulk-copy" aria-label="Copy selected as one" title="Copy as one" data-icon="copy"></button>
         <button type="button" class="icon-btn sm" id="bulk-pin" aria-label="Pin selected" title="Pin" data-icon="pin"></button>
         <button type="button" class="icon-btn sm" id="bulk-fav" aria-label="Favorite selected" title="Favorite" data-icon="star"></button>
         <button type="button" class="icon-btn sm danger" id="bulk-delete" aria-label="Delete selected" title="Delete" data-icon="trash"></button>
@@ -52,10 +53,11 @@
 
       <footer class="footer">
         <span class="footer-count" id="count"></span>
+        <button type="button" class="pause-pill" id="pause-pill" hidden></button>
         <span class="hints" aria-hidden="true">
           <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
           <span><kbd>↵</kbd> copy</span>
-          <span><kbd>⇧</kbd><kbd>↵</kbd> details</span>
+          <span><kbd class="mod-key"></kbd><kbd>↵</kbd> paste</span>
         </span>
       </footer>
     </div>
@@ -65,6 +67,10 @@
       <button type="button" role="menuitem" data-menu="new"><span data-icon="plus"></span>New snippet</button>
       <button type="button" role="menuitem" data-menu="select"><span data-icon="select"></span>Select items</button>
       <hr>
+      <button type="button" role="menuitem" data-menu="pause-5" data-capture="running"><span data-icon="pause"></span>Pause saving for 5 minutes</button>
+      <button type="button" role="menuitem" data-menu="pause-60" data-capture="running"><span data-icon="pause"></span>Pause saving for 1 hour</button>
+      <button type="button" role="menuitem" data-menu="resume" data-capture="paused"><span data-icon="play"></span>Resume saving</button>
+      <hr data-capture="any">
       <button type="button" role="menuitem" data-menu="import"><span data-icon="upload"></span>Import…</button>
       <button type="button" role="menuitem" data-menu="export"><span data-icon="download"></span>Export</button>
       <hr>
@@ -130,9 +136,16 @@
             <label class="set-row">
               <div>
                 <div class="set-label">Save copies automatically</div>
-                <div class="set-desc">Saves any text you copy while Chrome is running, in Chrome or in any other app. That includes passwords you copy; only card numbers are skipped. Everything stays on this device.</div>
+                <div class="set-desc">Saves any text you copy while Chrome is running, in Chrome or in any other app. That includes passwords you copy. Everything stays on this device. You can pause it for a while from the ⋯ menu.</div>
               </div>
               <input type="checkbox" class="switch" id="s-capture">
+            </label>
+            <label class="set-row">
+              <div>
+                <div class="set-label">Skip card numbers and secret keys</div>
+                <div class="set-desc">Automatic saving leaves out text that looks like a payment card number, a private key or an access token (GitHub, AWS, Stripe, JWT and similar). Passwords cannot be recognized and are still saved.</div>
+              </div>
+              <input type="checkbox" class="switch" id="s-skip-sensitive">
             </label>
             <div class="set-row">
               <div>

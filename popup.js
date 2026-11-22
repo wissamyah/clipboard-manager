@@ -1,5 +1,5 @@
 /**
- * Main list UI for Clipboard Manager (popup and side panel).
+ * Main list UI for Clipboard Manager (popup, side panel and floating window).
  *
  * Data flow: every action writes through CM.Store, and the UI redraws from
  * chrome.storage.onChanged. That single path keeps the popup, the side panel
@@ -42,6 +42,7 @@
   const haystacks = new WeakMap(); // item -> lowercased searchable text
   let chipsSignature = null;
   let copiedTimer = 0;
+  let pauseTimer = 0;
 
   /**
    * Tiny element builder. `html` is only ever given static icon markup;
@@ -229,6 +230,7 @@
       h(
         'span',
         { class: 'row-actions' },
+        actionButton('paste', 'paste', 'Paste into the page'),
         actionButton('pin', 'pin', item.pinned ? 'Unpin' : 'Pin to top', item.pinned ? 'on-pin' : '', item.pinned),
         actionButton('fav', 'star', item.favorite ? 'Remove from favorites' : 'Add to favorites', item.favorite ? 'on-fav' : '', item.favorite),
         actionButton('open', 'chevron', 'Details and edit'),
@@ -276,6 +278,9 @@
         el._signature = signature;
         buildRow(el, item);
       }
+      // Position for Ctrl/Cmd+1…9
+      if (index < 9) el.dataset.n = index + 1;
+      else delete el.dataset.n;
       keep.add(item.id);
       if (el === cursor) cursor = cursor.nextElementSibling;
       else els.list.insertBefore(el, cursor);
@@ -386,8 +391,37 @@
       els.bulkCount.textContent = `${count.toLocaleString()} selected`;
       const allChecked = shown > 0 && state.visible.every((item) => state.checked.has(item.id));
       els.bulkAll.textContent = allChecked ? 'Select none' : 'Select all';
-      for (const button of [els.bulkPin, els.bulkFav, els.bulkDelete]) button.disabled = count === 0;
+      for (const button of [els.bulkCopy, els.bulkPin, els.bulkFav, els.bulkDelete]) button.disabled = count === 0;
     }
+    renderCaptureState();
+  }
+
+  /** Pause controls: menu entries while capture is on, a footer pill while it is paused. */
+  function renderCaptureState() {
+    const { autoCapture, pauseUntil } = state.settings;
+    const remaining = pauseUntil - Date.now();
+    const mode = !autoCapture ? 'off' : remaining > 0 ? 'paused' : 'running';
+
+    for (const el of els.menu.querySelectorAll('[data-capture]')) {
+      el.hidden = mode === 'off' || (el.dataset.capture !== 'any' && el.dataset.capture !== mode);
+    }
+    els.pausePill.hidden = mode !== 'paused';
+    els.app.classList.toggle('capture-paused', mode === 'paused');
+
+    clearTimeout(pauseTimer);
+    if (mode !== 'paused') return;
+    const until = new Date(pauseUntil).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    els.pausePill.replaceChildren(
+      h('span', { class: 'pause-icon', html: CM.icon('pause', 11, true) }),
+      `Saving paused until ${until}`,
+      h('span', { class: 'pause-resume' }, 'Resume')
+    );
+    pauseTimer = setTimeout(renderCaptureState, remaining + 250);
+  }
+
+  function pauseCapture(minutes) {
+    CM.Store.setSettings({ pauseUntil: minutes ? Date.now() + minutes * 60000 : 0 });
+    toast(minutes ? `Automatic saving paused for ${minutes === 60 ? '1 hour' : `${minutes} minutes`}` : 'Automatic saving resumed');
   }
 
   /**
@@ -470,6 +504,46 @@
       state.copiedId = null;
       syncRowStates();
     }, 1200);
+  }
+
+  /**
+   * Insert text into the field that has focus on the current page.
+   * @returns {Promise<'ok'|'none'|'blocked'>}
+   */
+  async function pasteText(text) {
+    try {
+      // From the floating window the page is in the browser window behind it.
+      const target = await chrome.windows.getLastFocused({ windowTypes: ['normal'] });
+      const [tab] = await chrome.tabs.query({ active: true, windowId: target.id });
+      return tab?.id == null ? 'blocked' : await CM.pasteIntoTab(tab.id, text);
+    } catch (error) {
+      console.error('Paste failed:', error);
+      return 'blocked';
+    }
+  }
+
+  /** Paste an item into the page; when that is not possible, copy it instead. */
+  async function pasteItem(item) {
+    const outcome = await pasteText(item.text);
+    if (outcome === 'ok') {
+      // Closing the popup hands focus back to the field that was just filled.
+      if (SURFACE === 'popup') window.close();
+      else toast('Pasted into the page');
+      return;
+    }
+    const reason = outcome === 'none' ? 'No text field is selected on the page' : 'This page cannot be pasted into';
+    toast((await copyText(item.text)) ? `${reason} — copied instead` : 'Could not paste or copy');
+  }
+
+  /** Copy the checked items as one text, one item per line, in list order. */
+  async function copyChecked() {
+    const shown = new Set(state.visible.map((item) => item.id));
+    const picked = [...state.visible, ...state.items.filter((item) => !shown.has(item.id))].filter((item) =>
+      state.checked.has(item.id)
+    );
+    if (!picked.length) return;
+    const ok = await copyText(picked.map((item) => item.text).join('\n'));
+    toast(ok ? `Copied ${plural(picked.length, 'item')} as one` : 'Could not copy to the clipboard');
   }
 
   async function saveClipboard() {
@@ -687,7 +761,8 @@
       return;
     }
     const action = event.target.closest('[data-act]')?.dataset.act;
-    if (action === 'pin') setFlag([item.id], 'pinned', !item.pinned);
+    if (action === 'paste') pasteItem(item);
+    else if (action === 'pin') setFlag([item.id], 'pinned', !item.pinned);
     else if (action === 'fav') setFlag([item.id], 'favorite', !item.favorite);
     else if (action === 'open') CM.Detail.open(item);
     else if (action === 'del') remove([item.id]);
@@ -714,6 +789,9 @@
     els.menu.hidePopover();
     if (action === 'new') CM.Detail.open(null);
     else if (action === 'select') setBulk(true);
+    else if (action === 'pause-5') pauseCapture(5);
+    else if (action === 'pause-60') pauseCapture(60);
+    else if (action === 'resume') pauseCapture(0);
     else if (action === 'import') CM.Data.pickImportFile();
     else if (action === 'export') CM.Data.exportItems('json');
     else if (action === 'settings') CM.Settings.open();
@@ -754,6 +832,19 @@
       return;
     }
 
+    // Ctrl/Cmd+1…9 copies the item in that position. `code`, because on some
+    // layouts the digit row needs Shift.
+    const digit = mod && !event.altKey && !event.shiftKey && /^Digit[1-9]$/.test(event.code) ? Number(event.code.slice(5)) : 0;
+    if (digit) {
+      const item = state.visible[digit - 1];
+      if (!item || state.bulk) return;
+      event.preventDefault();
+      state.activeId = item.id;
+      copyItem(item);
+      rows.get(item.id)?.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+
     switch (event.key) {
       case 'ArrowDown':
       case 'ArrowUp':
@@ -768,6 +859,7 @@
         event.preventDefault();
         if (state.bulk) toggleChecked(item.id);
         else if (event.shiftKey) CM.Detail.open(item);
+        else if (mod) pasteItem(item);
         else copyItem(item);
         return;
       }
@@ -869,10 +961,20 @@
       const selected = state.items.filter((item) => state.checked.has(item.id));
       if (selected.length) setFlag([...state.checked], flag, !selected.every((item) => item[flag]));
     };
+    els.bulkCopy.addEventListener('click', copyChecked);
     els.bulkPin.addEventListener('click', () => bulkFlag('pinned'));
     els.bulkFav.addEventListener('click', () => bulkFlag('favorite'));
     els.bulkDelete.addEventListener('click', () => remove([...state.checked]));
     els.bulkDone.addEventListener('click', () => setBulk(false));
+
+    els.pausePill.addEventListener('click', () => pauseCapture(0));
+
+    // Holding Ctrl/Cmd shows which number copies which row
+    const isMod = (event) => event.key === 'Meta' || event.key === 'Control';
+    const showNumbers = (on) => els.app.classList.toggle('show-nums', on);
+    document.addEventListener('keydown', (event) => isMod(event) && showNumbers(true));
+    document.addEventListener('keyup', (event) => isMod(event) && showNumbers(false));
+    addEventListener('blur', () => showNumbers(false));
 
     document.addEventListener('keydown', onKeydown);
     chrome.storage.onChanged.addListener(onStorageChanged);
@@ -899,10 +1001,12 @@
       bulkbar: $('#bulkbar'),
       bulkCount: $('#bulk-count'),
       bulkAll: $('#bulk-all'),
+      bulkCopy: $('#bulk-copy'),
       bulkPin: $('#bulk-pin'),
       bulkFav: $('#bulk-fav'),
       bulkDelete: $('#bulk-delete'),
-      bulkDone: $('#bulk-done')
+      bulkDone: $('#bulk-done'),
+      pausePill: $('#pause-pill')
     });
 
     CM.app = {
@@ -922,6 +1026,7 @@
 
     CM.hydrateIcons();
     els.searchKbd.textContent = IS_MAC ? '⌘K' : 'Ctrl K';
+    for (const key of document.querySelectorAll('.mod-key')) key.textContent = IS_MAC ? '⌘' : 'Ctrl';
     bindEvents();
     initSurfaces();
     CM.Detail.init();

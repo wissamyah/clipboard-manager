@@ -358,6 +358,7 @@
     const { settings } = CM.app.state;
     for (const radio of s.themeRadios) radio.checked = radio.value === settings.theme;
     s.capture.checked = settings.autoCapture;
+    s.skipSensitive.checked = settings.skipSensitive;
     s.max.value = String(settings.maxItems);
     s.autoDelete.value = String(settings.autoDeleteDays);
     s.relative.checked = settings.relativeTime;
@@ -386,7 +387,7 @@
   async function toggleCapture() {
     // The service worker starts or stops the clipboard watcher when the setting changes.
     const autoCapture = s.capture.checked;
-    await CM.app.actions.setSettings({ autoCapture });
+    await CM.app.actions.setSettings({ autoCapture, pauseUntil: 0 });
     CM.app.toast(autoCapture ? 'Automatic saving is on' : 'Automatic saving is off');
   }
 
@@ -414,6 +415,7 @@
         back: $('#s-back'),
         themeRadios: [...document.querySelectorAll('input[name="theme"]')],
         capture: $('#s-capture'),
+        skipSensitive: $('#s-skip-sensitive'),
         max: $('#s-max'),
         autoDelete: $('#s-autodelete'),
         relative: $('#s-relative'),
@@ -431,6 +433,7 @@
         });
       }
       s.capture.addEventListener('change', toggleCapture);
+      s.skipSensitive.addEventListener('change', () => CM.app.actions.setSettings({ skipSensitive: s.skipSensitive.checked }));
       s.max.addEventListener('change', () =>
         changeRetention({ maxItems: Number(s.max.value) }, s.max, CM.app.state.settings.maxItems)
       );

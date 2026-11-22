@@ -175,9 +175,9 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 
 ### Planned Tasks:
 - [x] Automatic capture skips card numbers (2.0.0). Password fields were skipped until 2.2.0; clipboard-based capture cannot see where a copy came from
-- [ ] Broader pattern detection for sensitive data
+- [x] Broader pattern detection for sensitive data: private keys and access tokens in known formats (2.3.0)
 - [ ] Optional encryption
-- [ ] Private mode
+- [x] Pause automatic capture for 5 minutes or 1 hour (2.3.0)
 - [ ] Auto-clear rules
 - [ ] Password protection
 - [ ] Secure delete
@@ -239,9 +239,9 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 ---
 
 ## 🎯 Current Status
-**Just Completed:** Version 2.2.0 - system-wide automatic capture and the floating window (see log below)
-**Next Up:** Phase 8 - Security & Privacy (encryption, pausing capture)
-**Current Version:** 2.2.0
+**Just Completed:** Version 2.3.0 - paste into the page, number-key copy, copy several as one, pausing capture (see log below)
+**Next Up:** Manual order for pinned items, sync of pinned snippets, images (see "Planned next")
+**Current Version:** 2.3.0
 
 ---
 
@@ -297,16 +297,32 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 - Ctrl/Cmd+K focuses search
 - No change to permissions, capture behaviour or stored data
 
-### Version 2.2.0 (Current)
+### Version 2.2.0
 - Automatic capture rebuilt: a clipboard watcher in an offscreen document replaces the per-page content script, so copies made in other apps, the address bar, PDFs and "Copy" buttons are saved too
 - Removed the optional `<all_urls>` site access; added the `offscreen` and `alarms` permissions (neither shows a warning)
 - Floating window, and side panel / floating window buttons in the header instead of the ⋯ menu
 - Privacy policy and documentation updated for the wider capture (passwords are no longer skipped)
 
+### Version 2.3.0 (Current)
+- Paste into the page: paste button on each row, Ctrl/Cmd+Enter, and a "Paste from Clipboard Manager" submenu on text fields (pinned first, then recent). Falls back to copying when no field is focused or the page cannot be reached
+- Ctrl/Cmd+1…9 copies the item in that position; the numbers show while the modifier is held
+- Select items → copy several as one text
+- Pause automatic saving for 5 minutes or 1 hour; the clipboard is not read during a pause
+- Automatic saving skips private keys and access tokens as well as card numbers (setting, on by default)
+- No new permissions
+
+### Planned next
+Chosen from what users of clipboard managers ask for most; not started.
+- Manual order for pinned items (needs an order field on items and a way to move them)
+- Sync pinned snippets only, through `chrome.storage.sync` (about 100 KB in total, so never the full history; needs privacy policy changes)
+- Images (the watcher reads text only, and images need IndexedDB instead of `chrome.storage.local`)
+
+### Decided against for now
+- Text expansion: needs a content script on every site, which means bringing back the `<all_urls>` access removed in 2.2.0
+- Scheduled automatic backups: writing a file without a click needs the `downloads` permission, which shows an install warning
+
 ### Ideas for later
 - Syntax highlighting in the detail panel
-- Image clipboard support
-- Pause automatic capture for a while (for example when copying passwords)
 
 ---
 
