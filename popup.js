@@ -230,7 +230,6 @@
       h(
         'span',
         { class: 'row-actions' },
-        actionButton('paste', 'paste', 'Paste into the page'),
         actionButton('pin', 'pin', item.pinned ? 'Unpin' : 'Pin to top', item.pinned ? 'on-pin' : '', item.pinned),
         actionButton('fav', 'star', item.favorite ? 'Remove from favorites' : 'Add to favorites', item.favorite ? 'on-fav' : '', item.favorite),
         actionButton('open', 'chevron', 'Details and edit'),
@@ -239,7 +238,7 @@
       h('span', { class: 'row-copied', html: CM.icon('check', 14) }, 'Copied')
     );
 
-    const check = h('span', { class: 'row-check' }, h('input', { type: 'checkbox', tabindex: '-1', 'aria-label': 'Select item' }));
+    const check = h('span', { class: 'row-check', title: 'Select' }, h('input', { type: 'checkbox', tabindex: '-1', 'aria-label': 'Select item' }));
     el.replaceChildren(check, typeTile, body, trail);
   }
 
@@ -396,7 +395,7 @@
     renderCaptureState();
   }
 
-  /** Pause controls: menu entries while capture is on, a footer pill while it is paused. */
+  /** Pause controls: menu entries and a footer button while capture is on, a footer pill while it is paused. */
   function renderCaptureState() {
     const { autoCapture, pauseUntil } = state.settings;
     const remaining = pauseUntil - Date.now();
@@ -406,6 +405,7 @@
       el.hidden = mode === 'off' || (el.dataset.capture !== 'any' && el.dataset.capture !== mode);
     }
     els.pausePill.hidden = mode !== 'paused';
+    els.pauseBtn.hidden = mode !== 'running';
     els.app.classList.toggle('capture-paused', mode === 'paused');
 
     clearTimeout(pauseTimer);
@@ -760,9 +760,14 @@
       toggleChecked(item.id);
       return;
     }
+    // The checkbox that replaces the type tile on hover starts a selection
+    if (event.target.closest('.row-check')) {
+      setBulk(true);
+      toggleChecked(item.id);
+      return;
+    }
     const action = event.target.closest('[data-act]')?.dataset.act;
-    if (action === 'paste') pasteItem(item);
-    else if (action === 'pin') setFlag([item.id], 'pinned', !item.pinned);
+    if (action === 'pin') setFlag([item.id], 'pinned', !item.pinned);
     else if (action === 'fav') setFlag([item.id], 'favorite', !item.favorite);
     else if (action === 'open') CM.Detail.open(item);
     else if (action === 'del') remove([item.id]);
@@ -968,6 +973,8 @@
     els.bulkDone.addEventListener('click', () => setBulk(false));
 
     els.pausePill.addEventListener('click', () => pauseCapture(0));
+    els.pauseBtn.addEventListener('click', () => pauseCapture(5));
+    els.settingsBtn.addEventListener('click', () => CM.Settings.open());
 
     // Holding Ctrl/Cmd shows which number copies which row
     const isMod = (event) => event.key === 'Meta' || event.key === 'Control';
@@ -1006,7 +1013,9 @@
       bulkFav: $('#bulk-fav'),
       bulkDelete: $('#bulk-delete'),
       bulkDone: $('#bulk-done'),
-      pausePill: $('#pause-pill')
+      pausePill: $('#pause-pill'),
+      pauseBtn: $('#pause-btn'),
+      settingsBtn: $('#settings-btn')
     });
 
     CM.app = {

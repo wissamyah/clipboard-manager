@@ -304,10 +304,11 @@ This roadmap outlines the phased approach to transform the Clipboard Manager int
 - Privacy policy and documentation updated for the wider capture (passwords are no longer skipped)
 
 ### Version 2.3.0 (Current)
-- Paste into the page: paste button on each row, Ctrl/Cmd+Enter, and a "Paste from Clipboard Manager" submenu on text fields (pinned first, then recent). Falls back to copying when no field is focused or the page cannot be reached
+- Paste into the page: Ctrl/Cmd+Enter, and a "Paste from Clipboard Manager" submenu on text fields (pinned first, then recent). Falls back to copying when no field is focused or the page cannot be reached
 - Ctrl/Cmd+1…9 copies the item in that position; the numbers show while the modifier is held
-- Select items → copy several as one text
-- Pause automatic saving for 5 minutes or 1 hour; the clipboard is not read during a pause
+- Select items → copy several as one text. Hovering a row swaps its type icon for a checkbox that starts a selection
+- Pause automatic saving for 5 minutes or 1 hour; the clipboard is not read during a pause. A footer button pauses for 5 minutes in one click
+- Settings button in the footer; in narrow side panels the footer drops key hints instead of clipping them
 - Automatic saving skips private keys and access tokens as well as card numbers (setting, on by default)
 - No new permissions
 

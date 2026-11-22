@@ -60,7 +60,7 @@
         <h2>What changed in version 2.3</h2>
         <p>Version 2.3 adds a way to put saved text straight into a page, and more control over automatic saving. No new permission is requested.</p>
         <ul>
-          <li><strong>Paste into the page.</strong> When you ask for it (the paste button on an item, <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>Enter</kbd>, or right-click → <strong>Paste from Clipboard Manager</strong>), the extension inserts that item's text into the text field you are in. It looks for the focused field and writes the text there; it does not read the page's content. This uses the permissions the right-click “Save selection” item already had.</li>
+          <li><strong>Paste into the page.</strong> When you ask for it (<kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>Enter</kbd> on an item, or right-click → <strong>Paste from Clipboard Manager</strong>), the extension inserts that item's text into the text field you are in. It looks for the focused field and writes the text there; it does not read the page's content. This uses the permissions the right-click “Save selection” item already had.</li>
           <li><strong>The right-click menu lists a few saved items.</strong> In a text field, the menu shows the start of up to ten items (pinned first, then the most recent) so you can pick one. Chrome keeps these labels on your device like the rest of your history.</li>
           <li><strong>Pause automatic saving.</strong> You can pause it for 5 minutes or 1 hour. While paused, the clipboard is not read at all.</li>
           <li><strong>More secrets are skipped.</strong> Besides payment-card numbers, automatic saving now leaves out text that looks like a private key or an access token. This can be turned off in Settings. Passwords still cannot be recognized.</li>
@@ -116,7 +116,7 @@
           <li>While Chrome is running, the extension checks the clipboard about once a second from a hidden page of its own.</li>
           <li>When the text on the clipboard changes, the new text is saved to your local history. This covers anything you copy or cut on your computer, in Chrome (including Incognito windows) or in any other app, even while Chrome is in the background.</li>
           <li>Text that looks like a payment-card number, a private key or an access token in a well-known format (for example GitHub, AWS, Stripe or a JSON Web Token) is skipped, unless you turn off <strong>Skip card numbers and secret keys</strong>. Nothing else is filtered: the clipboard does not reveal which app or field a copy came from, so passwords, one-time codes and other secrets without a recognizable shape are saved.</li>
-          <li>You can pause automatic saving for 5 minutes or 1 hour from the <strong>⋯</strong> menu. During a pause the hidden page is closed and the clipboard is not read; what you copy in that time is never saved, including after the pause ends.</li>
+          <li>You can pause automatic saving for 5 minutes or 1 hour from the <strong>⋯</strong> menu, or for 5 minutes with the pause button in the footer. During a pause the hidden page is closed and the clipboard is not read; what you copy in that time is never saved, including after the pause ends.</li>
           <li>Only text is read. Images and files are ignored. Whatever was on the clipboard before you turned the setting on, or before Chrome started, is not saved.</li>
           <li>Automatic saving does not read or change the pages you visit, and it does not send anything anywhere.</li>
           <li>Turning the setting off closes the hidden page and stops the clipboard checks immediately. Nothing is read when Chrome is not running.</li>
@@ -129,7 +129,7 @@
         <p>When you choose <strong>Save selection to Clipboard Manager</strong>, the extension reads the selected text on that page at that moment and saves it. It does not read anything else on the page, and it works whether or not automatic saving is on.</p>
 
         <h3>Pasting a saved item into a page</h3>
-        <p>When you use the paste button on an item, press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>Enter</kbd>, or choose an item under <strong>Paste from Clipboard Manager</strong> in the right-click menu, the extension inserts that item's text into the text field that has focus on the current page. It checks which field is focused and writes the text there. It does not read what the page or the field contains, it does nothing on a page until you ask, and the page receives only the text you chose to paste.</p>
+        <p>When you press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>Enter</kbd> on an item, or choose an item under <strong>Paste from Clipboard Manager</strong> in the right-click menu, the extension inserts that item's text into the text field that has focus on the current page. It checks which field is focused and writes the text there. It does not read what the page or the field contains, it does nothing on a page until you ask, and the page receives only the text you chose to paste.</p>
       </section>
 
       <section id="not">

@@ -16,12 +16,13 @@
 - Turning "Save copies automatically" on and off (no permission prompt). With it on, copy text in another app, in the address bar and on a page: each appears within about a second, also while Chrome is in the background
 - Update path for capture: load v2.1.0 with automatic saving on, then load v2.2.0 over it. Capture keeps working and `chrome://extensions` no longer lists site access
 - Right-click → "Save selection to Clipboard Manager"
-- Paste into the page (new in 2.3): focus an `<input>`, a `<textarea>`, a rich editor (Gmail compose) and a field inside an iframe, then open the popup and use the paste button and Ctrl/Cmd+Enter. The text lands at the caret and the popup closes. With no field focused, or on `chrome://` pages, it copies instead and says so. Repeat from the side panel and the floating window
+- Paste into the page (new in 2.3): focus an `<input>`, a `<textarea>`, a rich editor (Gmail compose) and a field inside an iframe, then open the popup and press Ctrl/Cmd+Enter on an item. The text lands at the caret and the popup closes. With no field focused, or on `chrome://` pages, it copies instead and says so. Repeat from the side panel and the floating window
 - Right-click a text field → "Paste from Clipboard Manager": pinned items first, then recent ones; the list follows the history as it changes
 - Ctrl/Cmd+1…9 copies the row in that position; holding Ctrl/Cmd shows the numbers
-- Select items → copy several as one
-- With automatic saving on: ⋯ → "Pause saving for 5 minutes". Copies made during the pause never appear, the footer shows the resume time, "Resume" works, and saving restarts by itself when the time is up
+- Hover a row: the type icon becomes a checkbox; ticking it starts a selection. Select items → copy several as one
+- With automatic saving on: ⋯ → "Pause saving for 5 minutes", and the pause button at the right of the footer (hidden while automatic saving is off or paused). Copies made during the pause never appear, the footer shows the resume time, "Resume" works, and saving restarts by itself when the time is up
 - A private key, a JWT and a `ghp_…` token are not captured; with "Skip card numbers and secret keys" off they are
+- The gear at the right of the footer opens Settings. In a narrow side panel the footer drops key hints instead of clipping them
 - Alt+Shift+V shortcut, the side panel and floating window buttons next to Save, import and export
 
 ## Step 1: Create Extension Package
@@ -62,10 +63,10 @@ Replace the v1.2.1 feature text (the statistics dashboard, storage optimization,
 
 ```
 NEW IN 2.3
-• Paste a saved item straight into the page: paste button, Ctrl/Cmd+Enter, or right-click a text field
+• Paste a saved item straight into the page: Ctrl/Cmd+Enter, or right-click a text field
 • Ctrl/Cmd+1 to 9 copies the item in that position
-• Copy several selected items as one
-• Pause automatic saving for 5 minutes or 1 hour
+• Hover an item and tick its checkbox to select several; copy them as one
+• Pause automatic saving for 5 minutes or 1 hour, from the menu or the footer
 • Automatic saving skips private keys and access tokens as well as card numbers
 
 NEW IN 2.2
@@ -97,12 +98,12 @@ PRIVATE BY DESIGN
 ```
 
 ### Update Screenshots (Recommended)
-Take new screenshots (1280x800 or 640x400 pixels, PNG). The old ones show the removed dark-green design.
-1. Main list, light theme
-2. Main list, dark theme
-3. Search with highlighted matches and filter chips
-4. Item details / editing
-5. Settings (theme, automatic saving, overview)
+The five screenshots in `store-assets/` (1280x800 PNG) were regenerated for the 2.3.0 interface; upload them in place of the 2.1.0 ones.
+1. `screenshot-1-history.png`: main list, light theme, a hovered row with its checkbox and actions
+2. `screenshot-2-search.png`: search with highlighted matches and filter chips
+3. `screenshot-3-edit.png`: item details / editing
+4. `screenshot-4-settings.png`: settings (theme, automatic saving, history)
+5. `screenshot-5-dark-sidepanel.png`: dark theme in the side panel
 
 ## Step 5: Privacy Practices
 Open the "Privacy practices" tab. Several answers change in v2.0.0.

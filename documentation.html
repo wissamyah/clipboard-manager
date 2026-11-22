@@ -81,7 +81,7 @@
           </div>
         </div>
         <div class="note">
-          <p><strong>New in version 2.3.</strong> Paste an item straight into the page with the paste button, <kbd>Ctrl</kbd> / <kbd>⌘</kbd> <kbd>Enter</kbd> or the right-click menu. <kbd>Ctrl</kbd> / <kbd>⌘</kbd> <kbd>1</kbd>–<kbd>9</kbd> copies the item in that position, several selected items can be copied as one, and automatic saving can be paused and now skips private keys and access tokens.</p>
+          <p><strong>New in version 2.3.</strong> Paste an item straight into the page with <kbd>Ctrl</kbd> / <kbd>⌘</kbd> <kbd>Enter</kbd> or the right-click menu. <kbd>Ctrl</kbd> / <kbd>⌘</kbd> <kbd>1</kbd>–<kbd>9</kbd> copies the item in that position, and automatic saving can be paused and now skips private keys and access tokens. Hovering a row turns its icon into a checkbox, so you can select several items and pin, favorite, delete or copy them as one. The footer has two new buttons on the right: one pauses automatic saving for 5 minutes, the other opens Settings.</p>
         </div>
         <div class="note">
           <p><strong>New in version 2.2.</strong> Automatic saving now records text you copy anywhere on your computer, not only on web pages, and no longer needs access to the sites you visit. There is a new floating window, and the side panel and floating window each have a button next to <strong>Save</strong>. See <a href="#saving">About automatic saving</a> for what this means for passwords you copy.</p>
@@ -122,7 +122,7 @@
           <li>It is off by default. Turn it on in Settings; no extra permission is needed.</li>
           <li>It saves text copied anywhere: web pages, the address bar, PDFs and other apps. It works while Chrome is running, even in the background, and a copy appears within about a second.</li>
           <li>Text that looks like a card number, a private key or an access token (GitHub, AWS, Stripe, JWT and similar) is skipped; you can turn that off in Settings. Passwords are <strong>not</strong> skipped: the clipboard does not say where a copy came from.</li>
-          <li><strong>Pause it</strong> before copying something you do not want kept: open the <strong>⋯</strong> menu and choose <strong>Pause saving for 5 minutes</strong> or <strong>1 hour</strong>. The footer shows when saving resumes; click it to resume sooner. Nothing copied during a pause is saved.</li>
+          <li><strong>Pause it</strong> before copying something you do not want kept: open the <strong>⋯</strong> menu and choose <strong>Pause saving for 5 minutes</strong> or <strong>1 hour</strong>, or click the pause button at the right of the footer to pause for 5 minutes. The footer shows when saving resumes; click it to resume sooner. Nothing copied during a pause is saved.</li>
           <li>Copying an item from Clipboard Manager itself does not save it again. Whatever was on the clipboard before you turned it on is not saved.</li>
         </ul>
         <div class="note warn">
@@ -144,11 +144,11 @@
         <h2>Working with items</h2>
         <ul>
           <li><strong>Copy.</strong> Click a row. The row confirms with a check mark.</li>
-          <li><strong>Paste into the page.</strong> Click in a text field on the page, open Clipboard Manager and use the paste button on a row, or press <kbd>Ctrl</kbd> / <kbd>⌘</kbd> <kbd>Enter</kbd>. The text goes straight into the field and your clipboard is left as it was. You can also right-click a text field and pick one of your pinned or recent items under <strong>Paste from Clipboard Manager</strong>. If no text field is selected, or Chrome does not allow access to the page, the item is copied instead so you can paste it yourself. Pasting is most reliable from the popup and the right-click menu; in the side panel and the floating window Chrome only allows it on a tab where you have already opened the popup.</li>
+          <li><strong>Paste into the page.</strong> Click in a text field on the page, open Clipboard Manager, select the item with the arrow keys and press <kbd>Ctrl</kbd> / <kbd>⌘</kbd> <kbd>Enter</kbd>. The text goes straight into the field and your clipboard is left as it was. You can also right-click a text field and pick one of your pinned or recent items under <strong>Paste from Clipboard Manager</strong>. If no text field is selected, or Chrome does not allow access to the page, the item is copied instead so you can paste it yourself. Pasting is most reliable from the popup and the right-click menu; in the side panel and the floating window Chrome only allows it on a tab where you have already opened the popup.</li>
           <li><strong>Pin, favorite, delete.</strong> Hover a row, or select it with the arrow keys, to show its actions.</li>
           <li><strong>Details.</strong> Click the arrow on a row to see the full text, edit it, add a name, manage tags or open a link in a new tab.</li>
           <li><strong>Undo.</strong> Deleting shows an <strong>Undo</strong> button for a few seconds.</li>
-          <li><strong>Select several.</strong> Choose <strong>Select items</strong> from the <strong>⋯</strong> menu to pin, favorite or delete many items at once, or to copy them as one text, one item per line.</li>
+          <li><strong>Select several.</strong> Hover a row and tick the checkbox that replaces its icon, or choose <strong>Select items</strong> from the <strong>⋯</strong> menu, to pin, favorite or delete many items at once, or to copy them as one text, one item per line.</li>
           <li><strong>Side panel.</strong> Click the side panel button next to <strong>Save</strong> to keep the list beside the page.</li>
           <li><strong>Floating window.</strong> Click the floating window button next to <strong>Save</strong> to open the list in its own small window that stays open while you work. It reopens where you last left it. Chrome cannot keep it above other windows.</li>
         </ul>
@@ -194,7 +194,7 @@
 
       <section id="settings">
         <h2>Settings</h2>
-        <p>Open the <strong>⋯</strong> menu and choose <strong>Settings</strong>.</p>
+        <p>Open the <strong>⋯</strong> menu and choose <strong>Settings</strong>, or click the gear at the right of the footer.</p>
         <div class="table-wrap">
           <table>
             <thead>
@@ -202,7 +202,7 @@
             </thead>
             <tbody>
               <tr><td><strong>Theme</strong></td><td>System, Light or Dark.</td></tr>
-              <tr><td><strong>Save copies automatically</strong></td><td>Saves the text you copy anywhere on your computer while Chrome is running. Off by default. Pause it from the <strong>⋯</strong> menu.</td></tr>
+              <tr><td><strong>Save copies automatically</strong></td><td>Saves the text you copy anywhere on your computer while Chrome is running. Off by default. Pause it from the <strong>⋯</strong> menu or the pause button in the footer.</td></tr>
               <tr><td><strong>Skip card numbers and secret keys</strong></td><td>Automatic saving leaves out text that looks like a card number, a private key or an access token. On by default. Passwords cannot be recognized.</td></tr>
               <tr><td><strong>Open shortcut</strong></td><td>Shows the current shortcut and lets you change it.</td></tr>
               <tr><td><strong>Keep up to</strong></td><td>100, 500, 1,000 or 5,000 items. The oldest unprotected items are removed first.</td></tr>

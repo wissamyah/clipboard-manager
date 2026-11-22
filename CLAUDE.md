@@ -38,6 +38,7 @@ Chrome extension (Manifest V3) that manages clipboard history with features for 
 ### Pasting into the page
 - `CM.pasteIntoTab(tabId, text, frameId?)` injects `pageInsert` (in `js/core.js`, self-contained because it is serialized into the page) with `chrome.scripting`. It only looks at the focused element and inserts text there; it never reads page content. Keep it that way: `privacy_policy.html` says so.
 - Access comes from `activeTab` alone, so it works where the user invoked the extension: the popup (toolbar icon or shortcut) and the context menu. In the side panel and the floating window it works only on a tab that already has the grant. Every failure falls back to copying, with a toast that says so. Do not add host permissions to make it more reliable.
+- There is no paste button on rows: paste is Ctrl/Cmd+Enter and the context menu only.
 - The context menu lists pinned items first, then the most recent (10 in total). `rebuildMenus()` runs on install, startup and whenever a history change alters that list.
 
 ## Development Commands
@@ -77,6 +78,10 @@ schemaVersion: 2
 ### Keyboard (in popup)
 - Typing: search. Ctrl/Cmd+K: focus search. Up/Down: move selection. Enter: copy. Ctrl/Cmd+Enter: paste into the page. Ctrl/Cmd+1…9: copy the row in that position (matched on `event.code`; the numbers show while the modifier is held). Shift+Enter: details. Ctrl/Cmd+Backspace: delete (with undo). Esc: back / clear search / close.
 - The key handler ignores events from other text fields, so editing never triggers list actions.
+
+### Selection and footer
+- Bulk mode starts from the ⋯ menu ("Select items") or from the checkbox that replaces a row's type tile on hover (`.row-check`, CSS only, `@media (hover: hover)`). In bulk mode every row shows its checkbox.
+- The footer ends with `.footer-actions`: a pause button (5 minutes, shown only while capture is running) and a settings button. The footer is a container (`footer`); narrow widths drop key hints instead of clipping them.
 
 ### Destructive actions
 - Deletes are immediate with an Undo toast. Only Clear history, retention changes that would remove items, and discarding unsaved edits use the confirm dialog (`CM.confirm`).
